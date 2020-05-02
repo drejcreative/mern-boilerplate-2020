@@ -1,0 +1,50 @@
+.listWrap {
+  margin-top: 20px;
+}
+
+.list {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+}
+
+.text {
+  margin-left: 10px;
+  span {
+    font-size: 12px;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    margin-top: 4px;
+  }
+}
+
+.icon {
+  cursor: pointer;
+  color: car(--icon);
+}
+.iconCheck {
+  color: var(--border);
+  transition: .2s all ease-in;
+  &:hover {
+    color: var(--main);
+  }
+}
+.edit {
+  transition: .2s all ease-in;
+  &:hover {
+    color: var(--main);
+  }
+}
+.delete {
+  transition: .2s all ease-in;
+  &:hover {
+    color: red;
+  }
+}
+.active {
+  color: var(--main);
+}

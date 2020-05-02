@@ -1,0 +1,62 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to left, #8360c3, #2ebf91);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: AnimationName 1s ease infinite;
+
+  a {
+    margin-top: 20px;
+    display: inline-block;
+    text-decoration: none;
+    color: var(--light);
+  }
+}
+
+@keyframes AnimationName {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.todo {
+  width: 500px;
+  height: 700px;
+  background: var(--light);
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  position: relative;
+}
+
+.body {
+  padding: 20px;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(to left, var(--main), var(--secoundary));
+  color: var(--light);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 20px;
+  top: 175px;
+  transition: 0.2s all ease-in-out;
+  cursor: pointer;
+  &:hover {
+    background: linear-gradient(to left, var(--main), var(--secoundary));
+    transform: scale(1.2);
+  }
+}
+
+.rotate {
+  transform: rotate(45deg);
+}
