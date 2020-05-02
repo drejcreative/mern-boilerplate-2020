@@ -11,12 +11,13 @@ My personal MERN stack starter boilerplate, so I dont have to type it every time
 
 
 ## Install
-Clone this project with `git clone https://github.com/drejcreative/Event-Map-App.git`
+Clone this project with `git clone https://github.com/drejcreative/mern-boilerplate-2020.git`
 
 After it install all backend dependencies with `yarn`
 Then run the same command in `client` folder to install all frontend dependencies 
 
 ## Development server
+Change mongoDB url to your one in `config.env` file
 Run `yarn run server` for a dev server. 
 
 Run `npm run client` to start react app, or run `yarn start` in `client` folder.
