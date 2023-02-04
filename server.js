@@ -13,6 +13,7 @@ connectDB();
 // Routes Import
 // ----------------------------------
 const takhmeenForm = require("./routes/takhmeenForm");
+const hofDetails = require("./routes/hofDetails");
 
 // ----------------------------------
 // Express configuration
@@ -32,6 +33,7 @@ if (process.env.NODE_ENV === "development") {
 // API Routes
 // ----------------------------------
 app.use("/api/v1/takhmeenform", takhmeenForm);
+app.use("/api/v1/hof", hofDetails);
 
 // ----------------------------------
 // Express server
