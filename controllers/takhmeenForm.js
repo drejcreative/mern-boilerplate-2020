@@ -21,7 +21,12 @@ exports.getTakhmeenForm = async (req, res, next) => {
 // @route  POST /api/v1/takhmeenform
 exports.addTakhmeenForm = async (req, res, next) => {
   try {
-    const list = await TakhmeenForm.create(req.body);
+    const formData = {
+      ...req.body,
+      formNo: `${req.body.markaz}-${Date.now()}`
+    };
+    const list = await TakhmeenForm.create(formData);
+    // const list = await TakhmeenForm.create(req.body);
     return res.status(201).json({
       success: true,
       data: list
@@ -31,6 +36,7 @@ exports.addTakhmeenForm = async (req, res, next) => {
       success: false,
       error: 'Server error'
     })
+    return;
   }
 }
 

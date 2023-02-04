@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const TakhmeenFormSchema = new mongoose.Schema({
+  
   formNo: {
     type: String,
     trim: true,
@@ -10,22 +11,50 @@ const TakhmeenFormSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  hofId: {
+  HOFId: {
     type: String,
     required: true,
   },
-  hofName: {
+  HOFName: {
     type: String,
     required: true,
   },
-  hofAddress: {
+  HOFAddress: {
     type: String,
     required: true,
   },
-  hofPhone: {
+  HOFPhone: {
     type: String,
     required: true,
   },
+  familyMembers: {
+    type: Object,
+    required: false,
+  },
+  takhmeenAmount: {
+    type: Number,
+    required: true,
+  },
+  zabihat: {
+    type: Number,
+    required: true,
+  },
+  iftaari: {
+    type: Number,
+    required: true,
+  },
+  niyaaz: {
+    type: Number,
+    required: true,
+  },
+  chairs: {
+    type: Number,
+    required: false,
+  },
+  comments: {
+    type: String,
+    required: false,
+  }
 });
 
 module.exports = mongoose.model('1444forms', TakhmeenFormSchema);
