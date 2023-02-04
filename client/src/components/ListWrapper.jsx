@@ -1,11 +1,6 @@
 import "./ListWrapper.scss";
 
-// <span className={"button"} onClick={setView}>
-//     <FontAwesomeIcon icon={faPlus} className={formView ? "rotate" : ""} />
-// </span>
-
 import * as React from "react";
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -17,8 +12,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
+import AddBox from "@mui/icons-material/AddBox";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import SearchBar from "material-ui-search-bar";
 import Store from "../store/store";
 import { formService } from "../services/formService";
 import { GET_FORMS } from "../store/actionTypes";
@@ -26,7 +23,11 @@ import { GET_FORMS } from "../store/actionTypes";
 function createData(form) {
   return {
     ...form,
-    grandTotal: form.takhmeenAmount + form.niyaaz + form.iftaari + form.zabihat,
+    grandTotal:
+      Number(form.takhmeenAmount) +
+      Number(form.niyaaz) +
+      Number(form.iftaari) +
+      Number(form.zabihat),
     takhmeenDetails: {
       niyaaz: form.niyaaz,
       iftaari: form.iftaari,
@@ -55,16 +56,20 @@ function Row(props) {
         <TableCell component="th" scope="row">
           {row.markaz}
         </TableCell>
-        <TableCell>{row.HOFID}</TableCell>
+        <TableCell>{row.HOFId}</TableCell>
         <TableCell>{row.HOFName}</TableCell>
         <TableCell align="right">{row.HOFPhone}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
+        <TableCell align="right">{row.grandTotal}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
+              <Typography
+                gutterBottom
+                component="div"
+                style={{ fontSize: "0.875rem", fontWeight: "bold" }}
+              >
                 Takhmeen Details
               </Typography>
               <Table size="small" aria-label="purchases">
@@ -105,9 +110,15 @@ function Row(props) {
 
 export default function CollapsibleTable() {
   const { state, dispatch } = React.useContext(Store);
+
   React.useEffect(() => {
     getForms();
   }, []);
+
+  React.useEffect(() => {
+    setRows(state.forms);
+  }, [state.forms]);
+
   const getForms = async () => {
     const data = await formService.getForms();
     dispatch({
@@ -115,25 +126,62 @@ export default function CollapsibleTable() {
       payload: data,
     });
   };
+  const [rows, setRows] = React.useState([]);
+  const [searched, setSearched] = React.useState("");
+
+  const requestSearch = (searchedVal) => {
+    if (!searchedVal.trim()) return;
+    const filteredRows = rows.filter((row) => {
+      return (
+        row.HOFId.toLowerCase().includes(searchedVal.toLowerCase()) ||
+        row.HOFName.toLowerCase().includes(searchedVal.toLowerCase()) ||
+        row.markaz.toLowerCase().includes(searchedVal.toLowerCase())
+      );
+    });
+    setRows(filteredRows);
+  };
+
+  const cancelSearch = () => {
+    setSearched("");
+    requestSearch(searched);
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Markaz</TableCell>
-            <TableCell>HOF ID</TableCell>
-            <TableCell>HOF Name</TableCell>
-            <TableCell align="right">HOF Contact</TableCell>
-            <TableCell align="right">Total takhmeen amount</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {state.forms.map((row) => (
-            <Row key={row._id} row={createData(row)} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <div className="d-flex justify-content-between">
+        <SearchBar
+          className={"mb-2"}
+          value={searched}
+          onChange={(searchVal) => requestSearch(searchVal)}
+          onCancelSearch={() => cancelSearch()}
+        />
+        <IconButton color="secondary" size="large">
+          <AddBox fontSize="inherit" />
+        </IconButton>
+      </div>
+      <TableContainer component={Paper}>
+        <Table aria-label="collapsible table">
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell style={{ fontWeight: "bold" }}>Markaz</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
+              <TableCell style={{ fontWeight: "bold" }} align="right">
+                HOF Contact
+              </TableCell>
+              <TableCell style={{ fontWeight: "bold" }} align="right">
+                Total takhmeen amount
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <Row key={row._id} row={createData(row)} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   );
 }
