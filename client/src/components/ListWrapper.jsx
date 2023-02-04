@@ -110,14 +110,19 @@ function Row(props) {
 
 export default function CollapsibleTable() {
   const { state, dispatch } = React.useContext(Store);
-
+  const [origRows, setOrigRows] = React.useState([]);
+  const [rows, setRows] = React.useState([]);
   React.useEffect(() => {
     getForms();
   }, []);
 
   React.useEffect(() => {
-    setRows(state.forms);
+    setOrigRows(state.forms);
   }, [state.forms]);
+
+  React.useEffect(() => {
+    setRows(state.forms);
+  }, [origRows]);
 
   const getForms = async () => {
     const data = await formService.getForms();
@@ -126,11 +131,10 @@ export default function CollapsibleTable() {
       payload: data,
     });
   };
-  const [rows, setRows] = React.useState([]);
   const [searched, setSearched] = React.useState("");
 
   const requestSearch = (searchedVal) => {
-    if (!searchedVal.trim()) return;
+    if (!searchedVal.trim()) return setRows(origRows);
     const filteredRows = rows.filter((row) => {
       return (
         row.HOFId.toLowerCase().includes(searchedVal.toLowerCase()) ||
