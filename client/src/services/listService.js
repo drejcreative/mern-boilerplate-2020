@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
-import { config } from "../config/config"
+import { config } from "../config/config";
 
 export class listService {
-  static url = `${config.apiUrl}/list`;
+  static url = `${config.apiUrl}/takhmeenform`;
 
   static async fetchList() {
     try {

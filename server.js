@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === "development") {
 // ----------------------------------
 // API Routes
 // ----------------------------------
-app.use("/api/v1/takhmeenForm", takhmeenForm);
+app.use("/api/v1/takhmeenform", takhmeenForm);
 
 // ----------------------------------
 // Express server
