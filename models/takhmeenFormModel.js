@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const TakhmeenFormSchema = new mongoose.Schema({
-  
   formNo: {
     type: String,
     trim: true,
@@ -54,7 +53,7 @@ const TakhmeenFormSchema = new mongoose.Schema({
   comments: {
     type: String,
     required: false,
-  }
+  },
 });
 
-module.exports = mongoose.model('1444forms', TakhmeenFormSchema);
+module.exports = mongoose.model("1444forms", TakhmeenFormSchema);

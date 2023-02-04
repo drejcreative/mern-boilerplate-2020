@@ -1,39 +1,42 @@
 import {
-  GET_LIST,
-  ADD_TO_LIST,
-  REMOVE_FROM_LIST,
-  UPDATE_LIST
-} from './actionTypes';
+  GET_FORMS,
+  ADD_TO_FORMS,
+  REMOVE_FROM_FORMS,
+  UPDATE_FORMS,
+} from "./actionTypes";
 
 export default function reducer(state, action) {
   switch (action.type) {
-    case GET_LIST:
+    case GET_FORMS:
       return {
         ...state,
-        list: action.payload
-      }
-    case ADD_TO_LIST:
+        forms: action.payload,
+      };
+    case ADD_TO_FORMS:
       const newItem = action.payload;
       return {
         ...state,
-        list: [...state.list, newItem]
-      }
-    case UPDATE_LIST:
+        forms: [...state.forms, newItem],
+      };
+    case UPDATE_FORMS:
       const editedList = action.payload;
-      const updatedList = state.list.map(item => item._id === editedList._id ? editedList : item)
+      const updatedList = state.forms.map((item) =>
+        item._id === editedList._id ? editedList : item
+      );
       return {
         ...state,
-        list: updatedList
-      }
-    case REMOVE_FROM_LIST:
-      const filteredList = state.list.filter(item => item._id !== action.payload)
+        forms: updatedList,
+      };
+    case REMOVE_FROM_FORMS:
+      const filteredList = state.forms.filter(
+        (item) => item._id !== action.payload
+      );
       return {
         ...state,
-        list: filteredList
-      }
-    default:
-      {
-        return state;
-      }
+        forms: filteredList,
+      };
+    default: {
+      return state;
+    }
   }
 }

@@ -2,10 +2,10 @@ import axios from "axios";
 
 import { config } from "../config/config";
 
-export class listService {
+export class formService {
   static url = `${config.apiUrl}/takhmeenform`;
 
-  static async fetchList() {
+  static async getForms() {
     try {
       const response = await axios.get(this.url);
       return response.data.data;
@@ -14,7 +14,7 @@ export class listService {
     }
   }
 
-  static async addToList(data) {
+  static async addToForms(data) {
     try {
       const response = await axios.post(this.url, data);
       return response.data.data;
@@ -23,7 +23,7 @@ export class listService {
     }
   }
 
-  static async updateList(data) {
+  static async updateForm(data) {
     try {
       await axios.put(this.url, data);
       return data;
@@ -32,7 +32,7 @@ export class listService {
     }
   }
 
-  static async deleteFromList(id) {
+  static async deleteForm(id) {
     try {
       await axios.delete(this.url, { data: { id } });
       return id;

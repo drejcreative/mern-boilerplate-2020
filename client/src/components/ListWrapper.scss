@@ -1,0 +1,23 @@
+.button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(to left, var(--main), var(--secoundary));
+  color: var(--light);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 20px;
+  top: 175px;
+  transition: 0.2s all ease-in-out;
+  cursor: pointer;
+  &:hover {
+    background: linear-gradient(to left, var(--main), var(--secoundary));
+    transform: scale(1.2);
+  }
+}
+
+.rotate {
+  transform: rotate(45deg);
+}

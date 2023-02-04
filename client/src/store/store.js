@@ -1,7 +1,7 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 const Store = createContext({
-  list: []
-})
+  forms: [],
+});
 
 export default Store;

@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from "react";
 
-import Store from '../../store/store';
-import { ADD_TO_LIST, UPDATE_LIST } from '../../store/actionTypes';
+import Store from "../../store/store";
+import { ADD_TO_FORMS, UPDATE_FORMS } from "../../store/actionTypes";
 
-import { listService } from '../../services/listService';
+import { formService } from "../../services/formService";
 
-import style from './Form.module.scss';
+import style from "./Form.module.scss";
 
 const INITIAL_LIST = {
-  name: '',
-  text: ''
-}
+  name: "",
+  text: "",
+};
 
 const Form = ({ closeForm, edit, clearEdit }) => {
   const { dispatch } = useContext(Store);
@@ -20,38 +20,37 @@ const Form = ({ closeForm, edit, clearEdit }) => {
     if (edit) {
       setForm(edit);
     }
-  }, [edit])
+  }, [edit]);
 
-
-  const onFormChange = e => {
+  const onFormChange = (e) => {
     const { name, value } = e.target;
     setForm((prevState) => ({ ...prevState, [name]: value }));
-  }
+  };
 
   const clearForm = () => {
     setForm(INITIAL_LIST);
     closeForm();
-  }
+  };
 
   const formSubmit = async () => {
     if (edit) {
-      const newItem = await listService.updateList(form);
+      const newItem = await formService.updateList(form);
       dispatch({
-        type: UPDATE_LIST,
-        payload: newItem
-      })
+        type: UPDATE_FORMS,
+        payload: newItem,
+      });
       clearForm();
       clearEdit();
       return;
     }
 
-    const newItem = await listService.addToList(form);
+    const newItem = await formService.addToList(form);
     dispatch({
-      type: ADD_TO_LIST,
-      payload: newItem
-    })
+      type: ADD_TO_FORMS,
+      payload: newItem,
+    });
     clearForm();
-  }
+  };
 
   return (
     <div className={style.form}>
@@ -72,7 +71,7 @@ const Form = ({ closeForm, edit, clearEdit }) => {
       />
       <button onClick={formSubmit}>Submit</button>
     </div>
-  )
-}
+  );
+};
 
 export default Form;

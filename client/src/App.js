@@ -2,7 +2,6 @@ import React, { useContext, useReducer } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.module.scss";
 
 import Store from "./store/store";
 import reducer from "./store/reducer";

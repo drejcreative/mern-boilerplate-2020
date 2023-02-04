@@ -1,7 +1,7 @@
-export const GET_LIST = "GET_LIST";
-export const ADD_TO_LIST = "ADD_TO_LIST";
-export const REMOVE_FROM_LIST = "REMOVE_FROM_LIST";
-export const UPDATE_LIST = "UPDATE_LIST";
+export const GET_FORMS = "GET_FORMS";
+export const ADD_TO_FORMS = "ADD_TO_FORMS";
+export const REMOVE_FROM_FORMS = "REMOVE_FROM_FORMS";
+export const UPDATE_FORMS = "UPDATE_FORMS";
 
 export const SET_ERROR = "SET_ERROR";
 
