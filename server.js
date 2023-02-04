@@ -11,7 +11,7 @@ connectDB();
 // ----------------------------------
 // Routes Import
 // ----------------------------------
-const list = require('./routes/list');
+const takhmeenForm = require('./routes/takhmeenForm');
 
 
 // ----------------------------------
@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'development') {
 // ----------------------------------
 // API Routes
 // ----------------------------------
-app.use('/api/v1/list', list);
+app.use('/api/v1/takhmeenForm', takhmeenForm);
 
 // ----------------------------------
 // Express server
