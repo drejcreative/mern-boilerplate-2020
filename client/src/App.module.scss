@@ -1,3 +1,5 @@
+@import "~bootstrap/scss/bootstrap";
+
 .app {
   width: 100vw;
   height: 100vh;
@@ -17,9 +19,15 @@
 }
 
 @keyframes AnimationName {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .todo {
@@ -27,7 +35,7 @@
   height: 700px;
   background: var(--light);
   border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   position: relative;
 }
 
