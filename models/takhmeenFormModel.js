@@ -6,23 +6,23 @@ const TakhmeenFormSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  Markaz: {
+  markaz: {
     type: String,
     required: true,
   },
-  HofId: {
+  hofId: {
     type: String,
     required: true,
   },
-  HofName: {
+  hofName: {
     type: String,
     required: true,
   },
-  HofAddress: {
+  hofAddress: {
     type: String,
     required: true,
   },
-  HofPhone: {
+  hofPhone: {
     type: String,
     required: true,
   },
