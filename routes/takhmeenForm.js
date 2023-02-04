@@ -6,7 +6,7 @@ const { getTakhmeenForm, addTakhmeenForm, updateTakhmeenForm, deleteTakhmeenForm
 router.route('/')
   .get(getTakhmeenForm)
   .post(addTakhmeenForm)
-  .delete(updateTakhmeenForm)
-  .put(deleteTakhmeenForm)
+  .delete(deleteTakhmeenForm)
+  .put(updateTakhmeenForm)
 
 module.exports = router;

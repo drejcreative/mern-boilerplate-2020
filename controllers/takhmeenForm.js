@@ -26,7 +26,6 @@ exports.addTakhmeenForm = async (req, res, next) => {
       formNo: `${req.body.markaz}-${Date.now()}`
     };
     const list = await TakhmeenForm.create(formData);
-    // const list = await TakhmeenForm.create(req.body);
     return res.status(201).json({
       success: true,
       data: list
@@ -64,8 +63,8 @@ exports.updateTakhmeenForm = async (req, res, next) => {
 exports.deleteTakhmeenForm = async (req, res, next) => {
   try {
     console.log(req.body);
-
-    const list = await TakhmeenForm.findById(req.body.id);
+    const { _id } = req.body;
+    const list = await TakhmeenForm.findById(_id);
     if (!list) {
       res.status(404).json({
         success: false,
@@ -73,12 +72,12 @@ exports.deleteTakhmeenForm = async (req, res, next) => {
       });
     }
 
-    await TakhmeenForm.remove();
+    await TakhmeenForm.deleteOne();
     return res.status(200).json({
       success: true,
       data: {}
     });
   } catch (error) {
-
+    console.log(error);
   }
 }
