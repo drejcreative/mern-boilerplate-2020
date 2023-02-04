@@ -1,26 +1,38 @@
 const mongoose = require('mongoose');
 
 const HofDetailsSchema = new mongoose.Schema({
-  
-  HOFId: {
+
+  ITS_ID: {
     type: String,
     required: true,
   },
-  HOFName: {
+  HOF_FM_TYPE: {
     type: String,
     required: true,
   },
-  HOFAddress: {
+  HOF_ID: {
     type: String,
     required: true,
   },
-  HOFPhone: {
+  Full_Name: {
     type: String,
     required: true,
   },
-  familyMembers: {
-    type: Object,
-    required: false,
+  Age: {
+    type: String,
+    required: true,
+  },
+  Gender: {
+    type: String,
+    required: true,
+  },
+  HOF_PHONE: {
+    type: String,
+    required: true,
+  },
+  isHOF: {
+   type: Boolean,
+   require: false 
   }
 });
 
