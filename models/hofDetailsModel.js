@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const HofDetailsSchema = new mongoose.Schema({
-
   ITS_ID: {
     type: String,
     required: true,
@@ -31,9 +30,9 @@ const HofDetailsSchema = new mongoose.Schema({
     required: true,
   },
   isHOF: {
-   type: Boolean,
-   require: false 
-  }
+    type: Boolean,
+    require: false,
+  },
 });
 
-module.exports = mongoose.model('hofs', HofDetailsSchema);
+module.exports = mongoose.model("hofs", HofDetailsSchema);

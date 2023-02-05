@@ -1,0 +1,10 @@
+1. New form and Generate reciepts button on home page.
+2. Add back button
+3. View forms: add formNo in table, enable search on the same.
+4. View forms: add a view and edit button in table. 
+    View to open entire form in modal and edit will open add/edit form
+5. View forms: in placeholder we can add on what fields we are searching
+6. What will be the format of pass? Do we add print feature?
+7. Hof details will contain what all fields?
+8. Reciepts: will have print feature?
+9. Reciepts: will have edit/delete?

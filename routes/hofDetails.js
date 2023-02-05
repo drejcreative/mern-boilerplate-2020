@@ -1,9 +1,8 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const { getById } = require('../controllers/hofDetails');
+const { getById } = require("../controllers/hofDetails");
 
-router.route('/:hofid')
-  .get(getById)
+router.route("/:hofid").get(getById);
 
 module.exports = router;

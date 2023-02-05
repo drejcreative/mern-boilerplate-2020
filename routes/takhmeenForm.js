@@ -1,12 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const { getTakhmeenForm, addTakhmeenForm, updateTakhmeenForm, deleteTakhmeenForm } = require('../controllers/takhmeenForm');
+const {
+  getTakhmeenForm,
+  addTakhmeenForm,
+  updateTakhmeenForm,
+  deleteTakhmeenForm,
+} = require("../controllers/takhmeenForm");
 
-router.route('/')
+router
+  .route("/")
   .get(getTakhmeenForm)
   .post(addTakhmeenForm)
   .delete(deleteTakhmeenForm)
-  .put(updateTakhmeenForm)
+  .put(updateTakhmeenForm);
 
 module.exports = router;
