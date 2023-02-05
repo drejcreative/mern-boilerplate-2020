@@ -3,10 +3,22 @@ import {
   ADD_TO_FORMS,
   REMOVE_FROM_FORMS,
   UPDATE_FORMS,
+  START_LOADING,
+  END_LOADING,
 } from "./actionTypes";
 
 export default function reducer(state, action) {
   switch (action.type) {
+    case START_LOADING:
+      return {
+        ...state,
+        apiCallsInProgress: state.apiCallsInProgress + 1,
+      };
+    case END_LOADING:
+      return {
+        ...state,
+        apiCallsInProgress: state.apiCallsInProgress - 1,
+      };
     case GET_FORMS:
       return {
         ...state,

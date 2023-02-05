@@ -1,77 +1,192 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  TextField,
+  MenuItem,
+  Select,
+  FormGroup,
+  Checkbox,
+  Button,
+  Paper,
+} from "@mui/material";
+import { Grid } from "@mui/material";
 
-import Store from "../../store/store";
-import { ADD_TO_FORMS, UPDATE_FORMS } from "../../store/actionTypes";
-
-import { formService } from "../../services/formService";
-
-import style from "./Form.module.scss";
-
-const INITIAL_LIST = {
-  name: "",
-  text: "",
-};
-
-const Form = ({ closeForm, edit, clearEdit }) => {
-  const { dispatch } = useContext(Store);
-  const [form, setForm] = useState(INITIAL_LIST);
-
-  useEffect(() => {
-    if (edit) {
-      setForm(edit);
-    }
-  }, [edit]);
-
-  const onFormChange = (e) => {
+const MaterialFormComponent = (props) => {
+  const initialValues = {
+    firstName: "",
+    lastName: "",
+    gender: "male",
+    country: "Canada",
+    hobby: "",
+  };
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setForm((prevState) => ({ ...prevState, [name]: value }));
-  };
-
-  const clearForm = () => {
-    setForm(INITIAL_LIST);
-    closeForm();
-  };
-
-  const formSubmit = async () => {
-    if (edit) {
-      const newItem = await formService.updateList(form);
-      dispatch({
-        type: UPDATE_FORMS,
-        payload: newItem,
-      });
-      clearForm();
-      clearEdit();
-      return;
-    }
-
-    const newItem = await formService.addToList(form);
-    dispatch({
-      type: ADD_TO_FORMS,
-      payload: newItem,
+    setFormValues({
+      ...formValues,
+      [name]: value,
     });
-    clearForm();
   };
+
+  const [formValues, setFormValues] = useState(initialValues);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(getValues(), errors);
+  };
+
+  const methods = useForm({
+    defaultValues: initialValues,
+    resolver: (props) => {
+      return { values: props.values, errors: {} };
+    },
+  });
+  const {
+    register,
+    handleSubmit: submitIt,
+    reset,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+    getValues,
+  } = methods;
+  const onSubmit = (data) => console.log(data);
 
   return (
-    <div className={style.form}>
-      <input
-        type="text"
-        name="name"
-        placeholder="name"
-        value={form.name}
-        onChange={onFormChange}
-      />
-      <textarea
-        type="text"
-        name="text"
-        rows="4"
-        placeholder="text"
-        value={form.text}
-        onChange={onFormChange}
-      />
-      <button onClick={formSubmit}>Submit</button>
-    </div>
+    <Paper>
+      <div className="px-3">
+        <form onSubmit={submitIt(handleSubmit)}>
+          <Grid container spacing={2} direction={"row"}>
+            <Grid item xs={6}>
+              <TextField
+                required
+                fullWidth
+                size="small"
+                id="firstName"
+                name="firstName"
+                label="First name"
+                type="text"
+                {...register("firstName")}
+                error={errors.fullname ? true : false}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                size="small"
+                id="lastName"
+                name="lastName"
+                label="Last name"
+                type="text"
+                value={formValues.lastName}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <FormLabel>Gender</FormLabel>
+                <RadioGroup
+                  size="small"
+                  name="gender"
+                  value={formValues.gender}
+                  onChange={handleInputChange}
+                  row
+                >
+                  <FormControlLabel
+                    key="male"
+                    value="male"
+                    control={<Radio size="small" />}
+                    label="Male"
+                  />
+                  <FormControlLabel
+                    key="female"
+                    value="female"
+                    control={<Radio size="small" />}
+                    label="Female"
+                  />
+                  <FormControlLabel
+                    key="other"
+                    value="other"
+                    control={<Radio size="small" />}
+                    label="Other"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={6}>
+              <FormLabel>Select Country</FormLabel>
+              <FormControl label="Select Country" fullWidth>
+                <Select
+                  size="small"
+                  name="country"
+                  value={formValues.country}
+                  onChange={handleInputChange}
+                >
+                  <MenuItem key="canada" value="Canada">
+                    Canada
+                  </MenuItem>
+                  <MenuItem key="japan" value="Japan">
+                    Japan
+                  </MenuItem>
+                  <MenuItem key="germany " value="Germany">
+                    Germany
+                  </MenuItem>
+                  <MenuItem key="switzerland " value="Switzerland">
+                    Switzerland
+                  </MenuItem>
+                  <MenuItem key="australia " value="Australia">
+                    Australia
+                  </MenuItem>
+                  <MenuItem key="united_states " value="United States">
+                    United States
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={6}>
+              <FormLabel>Hobby</FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  control={<Checkbox name="hobby" defaultChecked />}
+                  label="Writing"
+                />
+                <FormControlLabel
+                  control={<Checkbox name="hobby" />}
+                  label="Dance"
+                />
+                <FormControlLabel
+                  control={<Checkbox name="hobby" />}
+                  label="Painting"
+                />
+                <FormControlLabel
+                  control={<Checkbox name="hobby" />}
+                  label="Video Game"
+                />
+              </FormGroup>
+            </Grid>
+            <Grid item xs={6} alignSelf="center">
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{
+                  backgroundColor: "green",
+                  margin: "5px",
+                }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+    </Paper>
   );
 };
-
-export default Form;
+export default MaterialFormComponent;
