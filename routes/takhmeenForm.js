@@ -6,6 +6,7 @@ const {
   addTakhmeenForm,
   updateTakhmeenForm,
   deleteTakhmeenForm,
+  getTakhmeenFormByHOF,
 } = require("../controllers/takhmeenForm");
 
 router
@@ -14,5 +15,7 @@ router
   .post(addTakhmeenForm)
   .delete(deleteTakhmeenForm)
   .put(updateTakhmeenForm);
+
+router.route("/:hofid").get(getTakhmeenFormByHOF);
 
 module.exports = router;

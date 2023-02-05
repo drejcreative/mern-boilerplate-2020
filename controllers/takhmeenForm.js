@@ -17,6 +17,26 @@ exports.getTakhmeenForm = async (req, res, next) => {
   }
 };
 
+// get takhmeen for by ID - to validate if form with this HOF exists
+exports.getTakhmeenFormByHOF = async (req, res, next) => {
+  try {
+    const hofId = req.params.hofid;
+    const list = await TakhmeenForm.find({ HOFId: hofId });
+    const data = {
+      exists: list.length ? true : false
+    }
+    return res.status(200).json({
+      success: true,
+      data: data,
+    });
+  } catch (error) {
+    res.send(500).json({
+      success: false,
+      error: "Server error",
+    });
+  }
+};
+
 // @desc   Add to List
 // @route  POST /api/v1/takhmeenform
 exports.addTakhmeenForm = async (req, res, next) => {
