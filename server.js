@@ -14,6 +14,7 @@ connectDB();
 // ----------------------------------
 const takhmeenForm = require("./routes/takhmeenForm");
 const hofDetails = require("./routes/hofDetails");
+const receipts = require("./routes/receipts");
 
 // ----------------------------------
 // Express configuration
@@ -34,6 +35,7 @@ if (process.env.NODE_ENV === "development") {
 // ----------------------------------
 app.use("/api/v1/takhmeenform", takhmeenForm);
 app.use("/api/v1/hof", hofDetails);
+app.use("/api/v1/receipts", receipts);
 
 // ----------------------------------
 // Express server
