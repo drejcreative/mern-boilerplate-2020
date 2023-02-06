@@ -2,20 +2,20 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getTakhmeenForm,
-  addTakhmeenForm,
-  updateTakhmeenForm,
-  deleteTakhmeenForm,
-  getTakhmeenFormByHOF,
+  get,
+  add,
+  update,
+  remove,
+  getByHOF,
 } = require("../controllers/takhmeenForm");
 
 router
   .route("/")
-  .get(getTakhmeenForm)
-  .post(addTakhmeenForm)
-  .delete(deleteTakhmeenForm)
-  .put(updateTakhmeenForm);
+  .get(get)
+  .post(add)
+  .put(update)
+  .delete(remove);
 
-router.route("/:hofid").get(getTakhmeenFormByHOF);
+router.route("/:hofid").get(getByHOF);
 
 module.exports = router;

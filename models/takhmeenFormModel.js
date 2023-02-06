@@ -50,6 +50,10 @@ const TakhmeenFormSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
+  paidAmount: {
+    type: Number,
+    required: false,
+  },
   comments: {
     type: String,
     required: false,
