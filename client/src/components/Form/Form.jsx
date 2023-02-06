@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import {
   FormControl,
   FormLabel,
@@ -38,6 +39,8 @@ import { formService } from "../../services/formService";
 import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../../constants";
 
 const MaterialFormComponent = (props) => {
+  const routeParams = useParams();
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(Store);
   const initialValues = {
     markaz: "ZM",
@@ -82,9 +85,15 @@ const MaterialFormComponent = (props) => {
     }
     dispatch({ type: START_LOADING });
     try {
-      const data = await formService.addToForms(getValues());
-      addToastMsg("Details saved : " + data.formNo, "success");
-      reset();
+      if (props.isEdit) {
+        const _ = await formService.updateForm(getValues());
+        addToastMsg("Details saved successfully", "success");
+        navigate("/list");
+      } else {
+        const data = await formService.addToForms(getValues());
+        addToastMsg("Details saved : " + data.formNo, "success");
+        reset();
+      }
     } catch (e) {
       console.log("error saving form", e);
       addToastMsg(
@@ -146,6 +155,26 @@ const MaterialFormComponent = (props) => {
   // I know its dirty, but got no other way to re render when delete member
   const [render, reRender] = useState(false);
 
+  // for edit mode
+  useEffect(() => {
+    async function t() {
+      if (props.isEdit) {
+        dispatch({ type: START_LOADING });
+        try {
+          const data = await formService.getFormbyFormNo(routeParams.formNo);
+          reset(data);
+          reRender(!render);
+        } catch (e) {
+          console.log("error getting form details", e);
+          addToastMsg("Unable to fetch form details", "error");
+          navigate("/list");
+        }
+        dispatch({ type: END_LOADING });
+      }
+    }
+    t();
+  }, []);
+
   return (
     <Paper>
       <div className="p-3">
@@ -192,6 +221,7 @@ const MaterialFormComponent = (props) => {
                   name="HOFId"
                   label="HOF ID"
                   type="text"
+                  disabled={props.isEdit}
                   {...register("HOFId")}
                   onBlur={handleHOFIdBlur}
                   error={errors.HOFId ? true : false}
@@ -456,10 +486,10 @@ const TakhmeenSummary = ({ takhmeenDetails }) => {
             <TableCell style={{ fontWeight: "bold" }}>
               Takhmeen amount
             </TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Zabihat count</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Zabihat</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Iftaari</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Niyaaz</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Chair count</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Chair</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>Grand Total</TableCell>
             <TableCell />
           </TableRow>
@@ -467,11 +497,11 @@ const TakhmeenSummary = ({ takhmeenDetails }) => {
         <TableBody>
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
             <TableCell>{takhmeenDetails.takhmeenAmount}</TableCell>
-            <TableCell>{takhmeenDetails.zabihat}</TableCell>
+            <TableCell>{`${takhmeenDetails.zabihat} x ${ZABIHAT_UNIT}`}</TableCell>
             <TableCell>{takhmeenDetails.iftaari}</TableCell>
             <TableCell>{takhmeenDetails.niyaaz}</TableCell>
-            <TableCell>{takhmeenDetails.chairs}</TableCell>
-            <TableCell>
+            <TableCell>{`${takhmeenDetails.chairs} x ${CHAIRS_UNIT}`}</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>
               {Number(takhmeenDetails.takhmeenAmount) +
                 Number(takhmeenDetails.zabihat * ZABIHAT_UNIT) +
                 Number(takhmeenDetails.iftaari) +

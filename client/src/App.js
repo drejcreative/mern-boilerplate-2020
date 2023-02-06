@@ -22,6 +22,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path={"/list"} element={<ListWrapper />} />
           <Route path={"/newform"} element={<Form />} />
+          <Route path={"/editform/:formNo"} element={<Form isEdit />} />
         </Routes>
       </Layout>
     </Store.Provider>

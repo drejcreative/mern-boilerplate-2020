@@ -14,6 +14,15 @@ export class formService {
     }
   }
 
+  static async getFormbyFormNo(formNo) {
+    try {
+      const response = await axios.get(this.url + "/form/" + formNo);
+      return response.data.data;
+    } catch (error) {
+      return error;
+    }
+  }
+
   static async isFormExistByHOF(id) {
     try {
       const response = await axios.get(this.url + "/" + id);

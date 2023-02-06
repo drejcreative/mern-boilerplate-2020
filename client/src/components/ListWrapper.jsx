@@ -19,6 +19,8 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Store from "../store/store";
 import { formService } from "../services/formService";
 import { END_LOADING, GET_FORMS, START_LOADING } from "../store/actionTypes";
+import { Link, useNavigate } from "react-router-dom";
+import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../constants";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -62,14 +64,16 @@ function createData(form) {
     ...form,
     grandTotal:
       Number(form.takhmeenAmount) +
-      Number(form.niyaaz) +
+      Number(form.zabihat * ZABIHAT_UNIT) +
       Number(form.iftaari) +
-      Number(form.zabihat),
+      Number(form.niyaaz) +
+      Number(form.chairs) * CHAIRS_UNIT,
     takhmeenDetails: {
       niyaaz: form.niyaaz,
       iftaari: form.iftaari,
       zabihat: form.zabihat,
       takhmeenAmount: form.takhmeenAmount,
+      chairs: form.chairs,
     },
   };
 }
@@ -80,7 +84,11 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        sx={{
+          "&:last-child td, &:last-child th": { border: 0 },
+        }}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -91,6 +99,9 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
+          <Link to={"/editform/" + row.formNo}>{row.formNo}</Link>
+        </TableCell>
+        <TableCell component="th" scope="row">
           {row.markaz}
         </TableCell>
         <TableCell>{row.HOFId}</TableCell>
@@ -99,7 +110,14 @@ function Row(props) {
         <TableCell align="right">{row.grandTotal}</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell
+          style={{
+            paddingBottom: 0,
+            paddingTop: 0,
+            borderBottom: "2px solid rgba(224, 224, 224, 1)",
+          }}
+          colSpan={12}
+        >
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography
@@ -113,10 +131,13 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell align="right">Takhmeen Amount</TableCell>
-                    <TableCell align="right">Niyaaz</TableCell>
                     <TableCell align="right">Zabihat</TableCell>
                     <TableCell align="right">Iftaari</TableCell>
-                    <TableCell align="right">Grand Total</TableCell>
+                    <TableCell align="right">Niyaaz</TableCell>
+                    <TableCell align="right">Chairs</TableCell>
+                    <TableCell align="right" style={{ fontWeight: "bold" }}>
+                      Grand Total
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -125,15 +146,20 @@ function Row(props) {
                       {row.takhmeenDetails.takhmeenAmount}
                     </TableCell>
                     <TableCell align="right">
-                      {row.takhmeenDetails.niyaaz}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row.takhmeenDetails.zabihat}
+                      {`${row.takhmeenDetails.zabihat} x ${ZABIHAT_UNIT}`}
                     </TableCell>
                     <TableCell align="right">
                       {row.takhmeenDetails.iftaari}
                     </TableCell>
-                    <TableCell align="right">{row.grandTotal}</TableCell>
+                    <TableCell align="right">
+                      {row.takhmeenDetails.niyaaz}
+                    </TableCell>
+                    <TableCell align="right">
+                      {`${row.takhmeenDetails.chairs} x ${CHAIRS_UNIT}`}
+                    </TableCell>
+                    <TableCell align="right" style={{ fontWeight: "bold" }}>
+                      {row.grandTotal}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -146,6 +172,7 @@ function Row(props) {
 }
 
 export default function CollapsibleTable() {
+  const navigate = useNavigate();
   const { state, dispatch } = React.useContext(Store);
   const [origRows, setOrigRows] = React.useState([]);
   const [rows, setRows] = React.useState([]);
@@ -170,11 +197,10 @@ export default function CollapsibleTable() {
         payload: data,
       });
     } catch (e) {
-      console.log(e);
+      console.log("failed to fetch form list", e);
     }
     dispatch({ type: END_LOADING });
   };
-  const [searched, setSearched] = React.useState("");
 
   const requestSearch = (searchedVal) => {
     if (!searchedVal.trim()) return setRows([...origRows]);
@@ -204,7 +230,12 @@ export default function CollapsibleTable() {
           />
         </Search>
         <IconButton color="secondary" size="large">
-          <AddBox fontSize="inherit" />
+          <AddBox
+            fontSize="inherit"
+            onClick={() => {
+              navigate("/newform");
+            }}
+          />
         </IconButton>
       </div>
       <TableContainer component={Paper}>
@@ -212,6 +243,7 @@ export default function CollapsibleTable() {
           <TableHead>
             <TableRow>
               <TableCell />
+              <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>Markaz</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
