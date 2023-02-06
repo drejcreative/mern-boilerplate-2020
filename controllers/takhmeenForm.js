@@ -1,6 +1,6 @@
 const TakhmeenForm = require("../models/takhmeenFormModel");
 
-// @desc   Get all from List
+// @desc   Get all from takhmeenform
 // @route  GET /api/v1/takhmeenform
 exports.get = async (req, res, next) => {
   try {
@@ -37,7 +37,7 @@ exports.getByHOF = async (req, res, next) => {
   }
 };
 
-// @desc   Add to List
+// @desc   Add to takhmeenform
 // @route  POST /api/v1/takhmeenform
 exports.add = async (req, res, next) => {
   try {
@@ -61,7 +61,7 @@ exports.add = async (req, res, next) => {
   }
 };
 
-// @desc   Update List
+// @desc   Update takhmeenform
 // @route  PUT /api/v1/takhmeenform
 exports.update = async (req, res, next) => {
   try {
@@ -95,7 +95,7 @@ exports.updateTakhmeenForm = async (HOFId, data, isAmountUpdate = false) => {
   }
 };
 
-// @desc   Delete List
+// @desc   Delete takhmeenform
 // @route  DELETE /api/v1/takhmeenform
 exports.remove = async (req, res, next) => {
   try {
