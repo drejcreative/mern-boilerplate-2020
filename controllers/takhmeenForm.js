@@ -41,7 +41,7 @@ exports.getByHOF = async (req, res, next) => {
 exports.getByFormNo = async (req, res, next) => {
   try {
     const formNo = req.params.formno;
-    const form = await TakhmeenForm.find({ formNo: formNo });
+    const form = await TakhmeenForm.findOne({ formNo: formNo });
     return res.status(200).json({
       success: true,
       data: form,
