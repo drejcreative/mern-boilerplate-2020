@@ -10,8 +10,6 @@ import {
   TextField,
   MenuItem,
   Select,
-  FormGroup,
-  Checkbox,
   Button,
   Paper,
   TableContainer,
@@ -36,7 +34,13 @@ import {
   START_LOADING,
 } from "../../store/actionTypes";
 import { formService } from "../../services/formService";
-import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../../constants";
+import {
+  CHAIRS_UNIT,
+  FORM_ADD_HEADER,
+  FORM_EDIT_HEADER,
+  ZABIHAT_UNIT,
+} from "../../constants";
+import Header from "../Header";
 
 const MaterialFormComponent = (props) => {
   const routeParams = useParams();
@@ -176,260 +180,268 @@ const MaterialFormComponent = (props) => {
   }, []);
 
   return (
-    <Paper>
-      <div className="p-3">
-        <form onSubmit={submitIt(handleSubmit)}>
-          <Grid container spacing={3} direction={"row"} alignContent={"center"}>
-            <div className="d-flex w-100 align-items-end">
-              <Grid
-                item
-                xs={6}
-                style={{ paddingLeft: "24px", paddingTop: "24px" }}
-              >
-                <FormLabel>Select markaz</FormLabel>
-                <FormControl label="Select markaz" fullWidth>
-                  <Select
+    <>
+      <Header header={props.isEdit ? FORM_EDIT_HEADER : FORM_ADD_HEADER} />
+      <Paper>
+        <div className="p-3">
+          <form onSubmit={submitIt(handleSubmit)}>
+            <Grid
+              container
+              spacing={3}
+              direction={"row"}
+              alignContent={"center"}
+            >
+              <div className="d-flex w-100 align-items-end">
+                <Grid
+                  item
+                  xs={6}
+                  style={{ paddingLeft: "24px", paddingTop: "24px" }}
+                >
+                  <FormLabel>Select markaz</FormLabel>
+                  <FormControl label="Select markaz" fullWidth>
+                    <Select
+                      fullWidth
+                      size="small"
+                      name="markaz"
+                      defaultValue={"ZM"}
+                      {...register("markaz")}
+                    >
+                      <MenuItem key="zm" value="ZM">
+                        Zainy Masjid
+                      </MenuItem>
+                      <MenuItem key="bh" value="BH">
+                        Burhani Hall
+                      </MenuItem>
+                      <MenuItem key="jm" value="JM">
+                        Jamali Markaz
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  style={{ paddingLeft: "24px", paddingTop: "24px" }}
+                >
+                  <TextField
+                    required
+                    className="mt-2"
                     fullWidth
                     size="small"
-                    name="markaz"
-                    defaultValue={"ZM"}
-                    {...register("markaz")}
-                  >
-                    <MenuItem key="zm" value="ZM">
-                      Zainy Masjid
-                    </MenuItem>
-                    <MenuItem key="bh" value="BH">
-                      Burhani Hall
-                    </MenuItem>
-                    <MenuItem key="jm" value="JM">
-                      Jamali Markaz
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid
-                item
-                xs={6}
-                style={{ paddingLeft: "24px", paddingTop: "24px" }}
-              >
+                    id="HOFId"
+                    name="HOFId"
+                    label="HOF ID"
+                    type="text"
+                    disabled={props.isEdit}
+                    {...register("HOFId")}
+                    onBlur={handleHOFIdBlur}
+                    error={errors.HOFId ? true : false}
+                  />
+                </Grid>
+              </div>
+              <Grid item xs={6}>
                 <TextField
                   required
-                  className="mt-2"
                   fullWidth
                   size="small"
-                  id="HOFId"
-                  name="HOFId"
-                  label="HOF ID"
+                  id="HOFName"
+                  name="HOFName"
+                  label="HOF Name"
                   type="text"
-                  disabled={props.isEdit}
-                  {...register("HOFId")}
-                  onBlur={handleHOFIdBlur}
-                  error={errors.HOFId ? true : false}
+                  value={HOFName}
+                  onChange={(e) => {
+                    setValue("HOFName", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFName ? true : false}
                 />
               </Grid>
-            </div>
-            <Grid item xs={6}>
-              <TextField
-                required
-                fullWidth
-                size="small"
-                id="HOFName"
-                name="HOFName"
-                label="HOF Name"
-                type="text"
-                value={HOFName}
-                onChange={(e) => {
-                  setValue("HOFName", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFName ? true : false}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                size="small"
-                id="HOFAddress"
-                name="HOFAddress"
-                label="HOF Address"
-                type="textarea"
-                {...register("HOFAddress")}
-                error={errors.HOFAddress ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                required
-                fullWidth
-                size="small"
-                id="HOFPhone"
-                name="HOFPhone"
-                label="HOF Phone"
-                type="text"
-                value={HOFPhone}
-                onChange={(e) => {
-                  setValue("HOFPhone", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFPhone ? true : false}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormLabel>Members list</FormLabel>
-              {MemberTable({
-                familyMembers,
-                handleDeleteMember: (its) => {
-                  const newFms = JSON.parse(JSON.stringify(familyMembers));
-                  newFms.splice((fm) => fm.its === its, 1);
-                  setValue("familyMembers", newFms);
-                  reRender(!render);
-                },
-              })}
-              <Link
-                className="pt-2"
-                component="p"
-                role={"button"}
-                variant="body2"
-                onClick={() => {
-                  setPopUpState(true);
-                }}
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  size="small"
+                  id="HOFAddress"
+                  name="HOFAddress"
+                  label="HOF Address"
+                  type="textarea"
+                  {...register("HOFAddress")}
+                  error={errors.HOFAddress ? true : false}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  required
+                  fullWidth
+                  size="small"
+                  id="HOFPhone"
+                  name="HOFPhone"
+                  label="HOF Phone"
+                  type="text"
+                  value={HOFPhone}
+                  onChange={(e) => {
+                    setValue("HOFPhone", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFPhone ? true : false}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormLabel>Members list</FormLabel>
+                {MemberTable({
+                  familyMembers,
+                  handleDeleteMember: (its) => {
+                    const newFms = JSON.parse(JSON.stringify(familyMembers));
+                    newFms.splice((fm) => fm.its === its, 1);
+                    setValue("familyMembers", newFms);
+                    reRender(!render);
+                  },
+                })}
+                <Link
+                  className="pt-2"
+                  component="p"
+                  role={"button"}
+                  variant="body2"
+                  onClick={() => {
+                    setPopUpState(true);
+                  }}
+                >
+                  Add Member
+                </Link>
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  required
+                  fullWidth
+                  size="small"
+                  id="takhmeenAmount"
+                  name="takhmeenAmount"
+                  label="Takhmeen amount"
+                  type="number"
+                  value={takhmeenAmount}
+                  onChange={(e) => {
+                    setValue("takhmeenAmount", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFPhone ? true : false}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="zabihat"
+                  name="zabihat"
+                  label="Zabihat count"
+                  type="number"
+                  value={zabihat}
+                  onChange={(e) => {
+                    setValue("zabihat", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFPhone ? true : false}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="iftaari"
+                  name="iftaari"
+                  label="Iftaari"
+                  type="number"
+                  value={iftaari}
+                  onChange={(e) => {
+                    setValue("iftaari", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFPhone ? true : false}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="niyaaz"
+                  name="niyaaz"
+                  label="Niyaaz"
+                  type="number"
+                  value={niyaaz}
+                  onChange={(e) => {
+                    setValue("niyaaz", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFPhone ? true : false}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="chairs"
+                  name="chairs"
+                  label="Chair count"
+                  type="number"
+                  value={chairs}
+                  onChange={(e) => {
+                    setValue("chairs", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
+                  error={errors.HOFPhone ? true : false}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormLabel>Takhmeen summary</FormLabel>
+                {TakhmeenSummary({
+                  takhmeenDetails: { ...getValues() },
+                })}
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  id="comments"
+                  name="comments"
+                  label="Comments"
+                  type="textarea"
+                  {...register("comments")}
+                />
+              </Grid>
+              <Grid
+                className="d-flex"
+                item
+                xs={12}
+                alignSelf="center"
+                justifyContent={"center"}
               >
-                Add Member
-              </Link>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  style={{
+                    backgroundColor: "green",
+                    margin: "5px",
+                  }}
+                >
+                  {props.isEdit ? "Update" : "Submit"}
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                required
-                fullWidth
-                size="small"
-                id="takhmeenAmount"
-                name="takhmeenAmount"
-                label="Takhmeen amount"
-                type="number"
-                value={takhmeenAmount}
-                onChange={(e) => {
-                  setValue("takhmeenAmount", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFPhone ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                size="small"
-                id="zabihat"
-                name="zabihat"
-                label="Zabihat count"
-                type="number"
-                value={zabihat}
-                onChange={(e) => {
-                  setValue("zabihat", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFPhone ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                size="small"
-                id="iftaari"
-                name="iftaari"
-                label="Iftaari"
-                type="number"
-                value={iftaari}
-                onChange={(e) => {
-                  setValue("iftaari", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFPhone ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                size="small"
-                id="niyaaz"
-                name="niyaaz"
-                label="Niyaaz"
-                type="number"
-                value={niyaaz}
-                onChange={(e) => {
-                  setValue("niyaaz", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFPhone ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                size="small"
-                id="chairs"
-                name="chairs"
-                label="Chair count"
-                type="number"
-                value={chairs}
-                onChange={(e) => {
-                  setValue("chairs", e.currentTarget?.value ?? "");
-                  reRender(!render);
-                }}
-                error={errors.HOFPhone ? true : false}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormLabel>Takhmeen summary</FormLabel>
-              {TakhmeenSummary({
-                takhmeenDetails: { ...getValues() },
-              })}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                size="small"
-                id="comments"
-                name="comments"
-                label="Comments"
-                type="textarea"
-                {...register("comments")}
-              />
-            </Grid>
-            <Grid
-              className="d-flex"
-              item
-              xs={12}
-              alignSelf="center"
-              justifyContent={"center"}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                style={{
-                  backgroundColor: "green",
-                  margin: "5px",
-                }}
-              >
-                Submit
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
+          </form>
+        </div>
 
-      {AddMemberModal({
-        open: isPopUpOpen,
-        handleClose: () => {
-          setPopUpState(false);
-        },
-        onSubmit: (vals) => {
-          !familyMembers.find((fm) => fm.its === vals.its) &&
-            setValue("familyMembers", [...familyMembers, vals]);
-        },
-      })}
-    </Paper>
+        {AddMemberModal({
+          open: isPopUpOpen,
+          handleClose: () => {
+            setPopUpState(false);
+          },
+          onSubmit: (vals) => {
+            !familyMembers.find((fm) => fm.its === vals.its) &&
+              setValue("familyMembers", [...familyMembers, vals]);
+          },
+        })}
+      </Paper>
+    </>
   );
 };
 

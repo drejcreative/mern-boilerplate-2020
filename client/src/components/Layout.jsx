@@ -10,14 +10,7 @@ export default function Layout({ children }) {
   const { state } = React.useContext(Store);
   return (
     <>
-      <div className="container py-2">
-        <div className="d-flex justify-content-center mb-4">
-          <Link to={"/"}>
-            <img width="150" src="/logo.png" alt="Home" />
-          </Link>
-        </div>
-        {children}
-      </div>
+      <div className="container py-2">{children}</div>
       {state.apiCallsInProgress ? (
         <div
           style={{

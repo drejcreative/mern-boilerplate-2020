@@ -20,7 +20,8 @@ import Store from "../store/store";
 import { formService } from "../services/formService";
 import { END_LOADING, GET_FORMS, START_LOADING } from "../store/actionTypes";
 import { Link, useNavigate } from "react-router-dom";
-import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../constants";
+import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../constants";
+import Header from "./Header";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -216,7 +217,8 @@ export default function CollapsibleTable() {
 
   return (
     <>
-      <div className="d-flex justify-content-between">
+      <Header header={FORM_LIST_HEADER} />
+      <div className="d-flex justify-content-between mt-2">
         <Search>
           <SearchIconWrapper>
             <SearchIcon />

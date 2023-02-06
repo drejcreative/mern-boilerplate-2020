@@ -5,7 +5,7 @@ import Store from "../store/store";
 
 const ToastService = () => {
   const { state, dispatch } = React.useContext(Store);
-  const handleClose = (event, reason, payload) => {
+  const handleClose = (_, reason, payload) => {
     if (reason === "clickaway") {
       return;
     }
