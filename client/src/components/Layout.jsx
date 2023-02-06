@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import "./Layout.scss";
 import Store from "../store/store";
+import ToastService from "./ToastService";
 
 export default function Layout({ children }) {
   const { state } = React.useContext(Store);
@@ -37,6 +38,7 @@ export default function Layout({ children }) {
           <CircularProgress color="secondary" />
         </div>
       ) : null}
+      {ToastService()}
     </>
   );
 }

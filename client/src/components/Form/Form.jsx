@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -13,50 +13,149 @@ import {
   Checkbox,
   Button,
   Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  Link,
+  Modal,
+  TableBody,
+  Box,
+  Typography,
+  IconButton,
+  Grid,
 } from "@mui/material";
-import { Grid } from "@mui/material";
+import Delete from "@mui/icons-material/Delete";
+import Store from "../../store/store";
+import { hofService } from "../../services/hofService";
+import {
+  ADD_TOAST_MSG,
+  END_LOADING,
+  START_LOADING,
+} from "../../store/actionTypes";
+import { formService } from "../../services/formService";
+import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../../constants";
 
 const MaterialFormComponent = (props) => {
+  const { state, dispatch } = useContext(Store);
   const initialValues = {
     markaz: "ZM",
     HOFId: "",
     HOFName: "",
     HOFAddress: "",
     HOFPhone: "",
+    familyMembers: [],
+    takhmeenAmount: null,
+    zabihat: null,
+    iftaari: null,
+    niyaaz: null,
+    chairs: null,
+    comments: "",
   };
-
   const {
     register,
     handleSubmit: submitIt,
     reset,
-    control,
     setValue,
     watch,
     formState: { errors },
     getValues,
   } = useForm({
     defaultValues: initialValues,
-    // resolver: (props) => {
-    //   return { values: props.values, errors: {} };
-    // },
   });
-  watch("HOFId");
-
-  const handleSubmit = (event) => {
-    // event?.preventDefault?.();
-    console.log(getValues(), errors);
+  watch("HOFId", "familyMembers");
+  const {
+    familyMembers,
+    HOFName,
+    HOFPhone,
+    takhmeenAmount,
+    zabihat,
+    iftaari,
+    niyaaz,
+    chairs,
+  } = getValues();
+  const handleSubmit = async () => {
+    const vals = getValues();
+    if (!vals.familyMembers?.length) {
+      return addToastMsg("Add atleast one member", "warning");
+    }
+    dispatch({ type: START_LOADING });
+    try {
+      const data = await formService.addToForms(getValues());
+      addToastMsg("Details saved : " + data.formNo, "success");
+      reset();
+    } catch (e) {
+      console.log("error saving form", e);
+      addToastMsg(
+        "Unable to save details, please re validate entered values",
+        "error"
+      );
+    }
+    dispatch({ type: END_LOADING });
   };
+
+  const [isPopUpOpen, setPopUpState] = useState(false);
+
+  const addToastMsg = (msg, type) => {
+    dispatch({ type: ADD_TOAST_MSG, payload: { msg, type } });
+  };
+  const handleHOFIdBlur = async (e) => {
+    if (!e.target.value) return;
+    dispatch({ type: START_LOADING });
+    try {
+      const data = await Promise.all([
+        hofService.getMembersByHOF(e.target.value).catch((e) => {
+          console.log("unable to fetch members list", e);
+          addToastMsg("unable to fetch members list", "error");
+        }),
+        formService.isFormExistByHOF(e.target.value),
+      ]);
+      if (data[0]?.length) {
+        const HOFDetails = data[0].find((d) => d.isHOF);
+        setValue(
+          "familyMembers",
+          data[0].map((d) => {
+            return {
+              name: d.Full_Name,
+              its: d.ITS_ID,
+              age: d.Age,
+              gender: d.Gender,
+            };
+          })
+        );
+        setValue("HOFName", HOFDetails.Full_Name, {
+          shouldTouch: true,
+          shouldDirty: true,
+        });
+        setValue("HOFPhone", HOFDetails.HOF_PHONE, { shouldDirty: true });
+        reRender(!render);
+      }
+
+      if (data[1]?.exists) {
+        addToastMsg("Data already exists for this HOF", "warning");
+        reset();
+      }
+    } catch (e) {
+      console.log("unexpected error", e);
+      addToastMsg("unexpected error", "error");
+    }
+    dispatch({ type: END_LOADING });
+  };
+
+  // I know its dirty, but got no other way to re render when delete member
+  const [render, reRender] = useState(false);
 
   return (
     <Paper>
       <div className="p-3">
         <form onSubmit={submitIt(handleSubmit)}>
-          <Grid container spacing={2} direction={"row"} alignContent={"center"}>
+          <Grid container spacing={3} direction={"row"} alignContent={"center"}>
             <div className="d-flex w-100 align-items-end">
               <Grid
                 item
                 xs={6}
-                style={{ paddingLeft: "16px", paddingTop: "16px" }}
+                style={{ paddingLeft: "24px", paddingTop: "24px" }}
               >
                 <FormLabel>Select markaz</FormLabel>
                 <FormControl label="Select markaz" fullWidth>
@@ -82,7 +181,7 @@ const MaterialFormComponent = (props) => {
               <Grid
                 item
                 xs={6}
-                style={{ paddingLeft: "16px", paddingTop: "16px" }}
+                style={{ paddingLeft: "24px", paddingTop: "24px" }}
               >
                 <TextField
                   required
@@ -94,6 +193,7 @@ const MaterialFormComponent = (props) => {
                   label="HOF ID"
                   type="text"
                   {...register("HOFId")}
+                  onBlur={handleHOFIdBlur}
                   error={errors.HOFId ? true : false}
                 />
               </Grid>
@@ -107,7 +207,11 @@ const MaterialFormComponent = (props) => {
                 name="HOFName"
                 label="HOF Name"
                 type="text"
-                {...register("HOFName")}
+                value={HOFName}
+                onChange={(e) => {
+                  setValue("HOFName", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
                 error={errors.HOFName ? true : false}
               />
             </Grid>
@@ -133,8 +237,133 @@ const MaterialFormComponent = (props) => {
                 name="HOFPhone"
                 label="HOF Phone"
                 type="text"
-                {...register("HOFPhone")}
+                value={HOFPhone}
+                onChange={(e) => {
+                  setValue("HOFPhone", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
                 error={errors.HOFPhone ? true : false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormLabel>Members list</FormLabel>
+              {MemberTable({
+                familyMembers,
+                handleDeleteMember: (its) => {
+                  const newFms = JSON.parse(JSON.stringify(familyMembers));
+                  newFms.splice((fm) => fm.its === its, 1);
+                  setValue("familyMembers", newFms);
+                  reRender(!render);
+                },
+              })}
+              <Link
+                className="pt-2"
+                component="p"
+                role={"button"}
+                variant="body2"
+                onClick={() => {
+                  setPopUpState(true);
+                }}
+              >
+                Add Member
+              </Link>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                required
+                fullWidth
+                size="small"
+                id="takhmeenAmount"
+                name="takhmeenAmount"
+                label="Takhmeen amount"
+                type="number"
+                value={takhmeenAmount}
+                onChange={(e) => {
+                  setValue("takhmeenAmount", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
+                error={errors.HOFPhone ? true : false}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                size="small"
+                id="zabihat"
+                name="zabihat"
+                label="Zabihat count"
+                type="number"
+                value={zabihat}
+                onChange={(e) => {
+                  setValue("zabihat", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
+                error={errors.HOFPhone ? true : false}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                size="small"
+                id="iftaari"
+                name="iftaari"
+                label="Iftaari"
+                type="number"
+                value={iftaari}
+                onChange={(e) => {
+                  setValue("iftaari", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
+                error={errors.HOFPhone ? true : false}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                size="small"
+                id="niyaaz"
+                name="niyaaz"
+                label="Niyaaz"
+                type="number"
+                value={niyaaz}
+                onChange={(e) => {
+                  setValue("niyaaz", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
+                error={errors.HOFPhone ? true : false}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                size="small"
+                id="chairs"
+                name="chairs"
+                label="Chair count"
+                type="number"
+                value={chairs}
+                onChange={(e) => {
+                  setValue("chairs", e.currentTarget?.value ?? "");
+                  reRender(!render);
+                }}
+                error={errors.HOFPhone ? true : false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormLabel>Takhmeen summary</FormLabel>
+              {TakhmeenSummary({
+                takhmeenDetails: { ...getValues() },
+              })}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                size="small"
+                id="comments"
+                name="comments"
+                label="Comments"
+                type="textarea"
+                {...register("comments")}
               />
             </Grid>
             <Grid
@@ -159,7 +388,238 @@ const MaterialFormComponent = (props) => {
           </Grid>
         </form>
       </div>
+
+      {AddMemberModal({
+        open: isPopUpOpen,
+        handleClose: () => {
+          setPopUpState(false);
+        },
+        onSubmit: (vals) => {
+          !familyMembers.find((fm) => fm.its === vals.its) &&
+            setValue("familyMembers", [...familyMembers, vals]);
+        },
+      })}
     </Paper>
   );
 };
+
+const MemberTable = ({ familyMembers, handleDeleteMember }) => {
+  return (
+    <TableContainer component={Paper}>
+      <Table size="small" aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>ITS</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Age</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Gender</TableCell>
+            <TableCell />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {familyMembers.map((fm) => {
+            return (
+              <TableRow
+                key={fm.its}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell>{fm.name}</TableCell>
+                <TableCell>{fm.its}</TableCell>
+                <TableCell>{fm.age}</TableCell>
+                <TableCell>{fm.gender}</TableCell>
+                <TableCell>
+                  <IconButton
+                    color="secondary"
+                    size="medium"
+                    onClick={() => {
+                      handleDeleteMember(fm.its);
+                    }}
+                  >
+                    <Delete fontSize="inherit" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+const TakhmeenSummary = ({ takhmeenDetails }) => {
+  return (
+    <TableContainer component={Paper}>
+      <Table size="small" aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            <TableCell style={{ fontWeight: "bold" }}>
+              Takhmeen amount
+            </TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Zabihat count</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Iftaari</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Niyaaz</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Chair count</TableCell>
+            <TableCell style={{ fontWeight: "bold" }}>Grand Total</TableCell>
+            <TableCell />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+            <TableCell>{takhmeenDetails.takhmeenAmount}</TableCell>
+            <TableCell>{takhmeenDetails.zabihat}</TableCell>
+            <TableCell>{takhmeenDetails.iftaari}</TableCell>
+            <TableCell>{takhmeenDetails.niyaaz}</TableCell>
+            <TableCell>{takhmeenDetails.chairs}</TableCell>
+            <TableCell>
+              {Number(takhmeenDetails.takhmeenAmount) +
+                Number(takhmeenDetails.zabihat * ZABIHAT_UNIT) +
+                Number(takhmeenDetails.iftaari) +
+                Number(takhmeenDetails.niyaaz) +
+                Number(takhmeenDetails.chairs) * CHAIRS_UNIT}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+const boxStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "50%",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};
+
+const AddMemberModal = ({ open, handleClose, onSubmit }) => {
+  const { register, handleSubmit, reset, getValues, setValue, watch } = useForm(
+    {
+      defaultValues: {
+        name: "",
+        its: "",
+        age: null,
+        gender: "male",
+      },
+    }
+  );
+  watch("gender");
+  const { gender } = getValues();
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={boxStyle}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Add Member
+        </Typography>
+        <form
+          onSubmit={() => {
+            onSubmit(getValues());
+            reset();
+            handleClose();
+          }}
+        >
+          <Grid container spacing={2} direction={"row"} alignContent={"center"}>
+            <Grid item xs={6}>
+              <TextField
+                required
+                fullWidth
+                size="small"
+                id="memberName"
+                name="name"
+                label="Name"
+                type="text"
+                {...register("name")}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                required
+                fullWidth
+                size="small"
+                id="memberITS"
+                name="its"
+                label="ITS"
+                type="text"
+                {...register("its")}
+              />
+            </Grid>
+            <div className="d-flex w-100 align-items-end">
+              <Grid
+                item
+                xs={6}
+                style={{ paddingLeft: "16px", paddingTop: "16px" }}
+              >
+                <TextField
+                  required
+                  fullWidth
+                  size="small"
+                  id="age"
+                  name="age"
+                  label="Age"
+                  type="number"
+                  {...register("age")}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={6}
+                style={{ paddingLeft: "16px", paddingTop: "16px" }}
+              >
+                <FormControl fullWidth>
+                  <FormLabel>Gender</FormLabel>
+                  <RadioGroup
+                    size="small"
+                    name="gender"
+                    value={gender}
+                    onChange={(e) => {
+                      setValue("gender", e.target.value);
+                    }}
+                    row
+                  >
+                    <FormControlLabel
+                      key="male"
+                      value="male"
+                      control={<Radio size="small" />}
+                      label="Male"
+                    />
+                    <FormControlLabel
+                      key="female"
+                      value="female"
+                      control={<Radio size="small" />}
+                      label="Female"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            </div>
+            <Grid
+              className="d-flex"
+              item
+              xs={12}
+              alignSelf="center"
+              justifyContent={"center"}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={{
+                  backgroundColor: "green",
+                  margin: "5px",
+                }}
+              >
+                Add Member
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </Box>
+    </Modal>
+  );
+};
+
 export default MaterialFormComponent;

@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import {
   GET_FORMS,
   ADD_TO_FORMS,
@@ -5,6 +6,8 @@ import {
   UPDATE_FORMS,
   START_LOADING,
   END_LOADING,
+  REMOVE_TOAST_MSG,
+  ADD_TOAST_MSG,
 } from "./actionTypes";
 
 export default function reducer(state, action) {
@@ -46,6 +49,19 @@ export default function reducer(state, action) {
       return {
         ...state,
         forms: filteredList,
+      };
+    case ADD_TOAST_MSG:
+      return {
+        ...state,
+        toastMsgs: [...state.toastMsgs, { ...action.payload, id: nanoid() }],
+      };
+    case REMOVE_TOAST_MSG:
+      const newToastMsgs = state.toastMsgs.filter(
+        (msg) => msg.id !== action.payload.id
+      );
+      return {
+        ...state,
+        toastMsgs: newToastMsgs ? [...newToastMsgs] : [],
       };
     default: {
       return state;
