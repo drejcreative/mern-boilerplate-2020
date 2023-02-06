@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, alpha } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -197,8 +197,10 @@ export default function CollapsibleTable() {
   const { state, dispatch } = React.useContext(Store);
   const [origRows, setOrigRows] = React.useState([]);
   const [rows, setRows] = React.useState([]);
+
   React.useEffect(() => {
     getForms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -207,6 +209,7 @@ export default function CollapsibleTable() {
 
   React.useEffect(() => {
     setRows(state.forms);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [origRows]);
 
   const getForms = async () => {

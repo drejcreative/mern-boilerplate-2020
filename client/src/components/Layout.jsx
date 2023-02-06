@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import "./Layout.scss";

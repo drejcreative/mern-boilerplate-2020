@@ -45,7 +45,7 @@ import Header from "../Header";
 const MaterialFormComponent = (props) => {
   const routeParams = useParams();
   const navigate = useNavigate();
-  const { state, dispatch } = useContext(Store);
+  const { dispatch } = useContext(Store);
   const initialValues = {
     markaz: "ZM",
     HOFId: "",
@@ -90,7 +90,7 @@ const MaterialFormComponent = (props) => {
     dispatch({ type: START_LOADING });
     try {
       if (props.isEdit) {
-        const _ = await formService.updateForm(getValues());
+        await formService.updateForm(getValues());
         addToastMsg("Details saved successfully", "success");
         navigate("/list");
       } else {
@@ -177,6 +177,7 @@ const MaterialFormComponent = (props) => {
       }
     }
     t();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -539,16 +540,14 @@ const boxStyle = {
 };
 
 const AddMemberModal = ({ open, handleClose, onSubmit }) => {
-  const { register, handleSubmit, reset, getValues, setValue, watch } = useForm(
-    {
-      defaultValues: {
-        name: "",
-        its: "",
-        age: null,
-        gender: "male",
-      },
-    }
-  );
+  const { register, reset, getValues, setValue, watch } = useForm({
+    defaultValues: {
+      name: "",
+      its: "",
+      age: null,
+      gender: "male",
+    },
+  });
   watch("gender");
   const { gender } = getValues();
   return (
