@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@mui/material";
 import PlusIcon from "@mui/icons-material/PlusOne";
 import ViewIcon from "@mui/icons-material/ViewList";
+import ReactPDF, { PDFViewer } from "@react-pdf/renderer";
+import MyDocument from "./PDF";
 
 export default function Home() {
   const navigate = useNavigate();

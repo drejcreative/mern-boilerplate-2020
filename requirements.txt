@@ -8,3 +8,4 @@
 7. Hof details will contain what all fields?
 8. Reciepts: will have print feature?
 9. Reciepts: will have edit/delete?
+10. Virtualization in table

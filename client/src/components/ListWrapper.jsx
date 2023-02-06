@@ -14,6 +14,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import AddBox from "@mui/icons-material/AddBox";
 import SearchIcon from "@mui/icons-material/Search";
+import DownloadIcon from "@mui/icons-material/Download";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Store from "../store/store";
@@ -22,6 +23,8 @@ import { END_LOADING, GET_FORMS, START_LOADING } from "../store/actionTypes";
 import { Link, useNavigate } from "react-router-dom";
 import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../constants";
 import Header from "./Header";
+import ReactPDF from "@react-pdf/renderer";
+import Passes from "./PDF";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -109,6 +112,23 @@ function Row(props) {
         <TableCell>{row.HOFName}</TableCell>
         <TableCell align="right">{row.HOFPhone}</TableCell>
         <TableCell align="right">{row.grandTotal}</TableCell>
+        <TableCell>
+          <ReactPDF.PDFDownloadLink
+            document={
+              <Passes
+                familyMembers={row.familyMembers}
+                HOFITS={row.HOFId}
+                formNo={row.formNo}
+                markaz={row.markaz}
+              />
+            }
+            fileName={`${row.formNo}`}
+          >
+            <IconButton size="small" color="secondary">
+              <DownloadIcon />
+            </IconButton>
+          </ReactPDF.PDFDownloadLink>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell
@@ -256,6 +276,7 @@ export default function CollapsibleTable() {
               <TableCell style={{ fontWeight: "bold" }} align="right">
                 Total takhmeen amount
               </TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Download</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
