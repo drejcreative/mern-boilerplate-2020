@@ -23,11 +23,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use(express.static(path.join(__dirname, "./client/public")));
-app.use(express.static(path.join(__dirname, "./client/build")));
-
 if (process.env.NODE_ENV === "development") {
+  app.use(express.static(path.join(__dirname, "./client/public")));
   app.use(morgan("dev"));
+}
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "./client/build")));
 }
 
 // ----------------------------------

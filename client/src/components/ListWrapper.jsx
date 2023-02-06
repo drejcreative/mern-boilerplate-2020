@@ -207,6 +207,7 @@ export default function CollapsibleTable() {
     if (!searchedVal.trim()) return setRows([...origRows]);
     const filteredRows = origRows.filter((row) => {
       return (
+        row.formNo.toLowerCase().includes(searchedVal.toLowerCase()) ||
         row.HOFId.toLowerCase().includes(searchedVal.toLowerCase()) ||
         row.HOFName.toLowerCase().includes(searchedVal.toLowerCase()) ||
         row.markaz.toLowerCase().includes(searchedVal.toLowerCase())
