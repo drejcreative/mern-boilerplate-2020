@@ -7,6 +7,7 @@ const {
   update,
   remove,
   getByHOF,
+  getByFormNo
 } = require("../controllers/takhmeenForm");
 
 router
@@ -17,5 +18,6 @@ router
   .delete(remove);
 
 router.route("/:hofid").get(getByHOF);
+router.route("/form/:formno").get(getByFormNo);
 
 module.exports = router;

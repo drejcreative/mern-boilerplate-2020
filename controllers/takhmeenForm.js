@@ -37,6 +37,23 @@ exports.getByHOF = async (req, res, next) => {
   }
 };
 
+// get takhmeen for by form no
+exports.getByFormNo = async (req, res, next) => {
+  try {
+    const formNo = req.params.formno;
+    const form = await TakhmeenForm.find({ formNo: formNo });
+    return res.status(200).json({
+      success: true,
+      data: form,
+    });
+  } catch (error) {
+    res.send(500).json({
+      success: false,
+      error: "Server error",
+    });
+  }
+};
+
 // @desc   Add to takhmeenform
 // @route  POST /api/v1/takhmeenform
 exports.add = async (req, res, next) => {
