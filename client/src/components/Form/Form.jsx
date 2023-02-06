@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   FormControl,
@@ -18,32 +18,13 @@ import { Grid } from "@mui/material";
 
 const MaterialFormComponent = (props) => {
   const initialValues = {
-    firstName: "",
-    lastName: "",
-    gender: "male",
-    country: "Canada",
-    hobby: "",
-  };
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
+    markaz: "ZM",
+    HOFId: "",
+    HOFName: "",
+    HOFAddress: "",
+    HOFPhone: "",
   };
 
-  const [formValues, setFormValues] = useState(initialValues);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(getValues(), errors);
-  };
-
-  const methods = useForm({
-    defaultValues: initialValues,
-    resolver: (props) => {
-      return { values: props.values, errors: {} };
-    },
-  });
   const {
     register,
     handleSubmit: submitIt,
@@ -53,124 +34,116 @@ const MaterialFormComponent = (props) => {
     watch,
     formState: { errors },
     getValues,
-  } = methods;
-  const onSubmit = (data) => console.log(data);
+  } = useForm({
+    defaultValues: initialValues,
+    // resolver: (props) => {
+    //   return { values: props.values, errors: {} };
+    // },
+  });
+  watch("HOFId");
+
+  const handleSubmit = (event) => {
+    // event?.preventDefault?.();
+    console.log(getValues(), errors);
+  };
 
   return (
     <Paper>
-      <div className="px-3">
+      <div className="p-3">
         <form onSubmit={submitIt(handleSubmit)}>
-          <Grid container spacing={2} direction={"row"}>
+          <Grid container spacing={2} direction={"row"} alignContent={"center"}>
+            <div className="d-flex w-100 align-items-end">
+              <Grid
+                item
+                xs={6}
+                style={{ paddingLeft: "16px", paddingTop: "16px" }}
+              >
+                <FormLabel>Select markaz</FormLabel>
+                <FormControl label="Select markaz" fullWidth>
+                  <Select
+                    fullWidth
+                    size="small"
+                    name="markaz"
+                    defaultValue={"ZM"}
+                    {...register("markaz")}
+                  >
+                    <MenuItem key="zm" value="ZM">
+                      Zainy Masjid
+                    </MenuItem>
+                    <MenuItem key="bh" value="BH">
+                      Burhani Hall
+                    </MenuItem>
+                    <MenuItem key="jm" value="JM">
+                      Jamali Markaz
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid
+                item
+                xs={6}
+                style={{ paddingLeft: "16px", paddingTop: "16px" }}
+              >
+                <TextField
+                  required
+                  className="mt-2"
+                  fullWidth
+                  size="small"
+                  id="HOFId"
+                  name="HOFId"
+                  label="HOF ID"
+                  type="text"
+                  {...register("HOFId")}
+                  error={errors.HOFId ? true : false}
+                />
+              </Grid>
+            </div>
             <Grid item xs={6}>
               <TextField
                 required
                 fullWidth
                 size="small"
-                id="firstName"
-                name="firstName"
-                label="First name"
+                id="HOFName"
+                name="HOFName"
+                label="HOF Name"
                 type="text"
-                {...register("firstName")}
-                error={errors.fullname ? true : false}
+                {...register("HOFName")}
+                error={errors.HOFName ? true : false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                size="small"
+                id="HOFAddress"
+                name="HOFAddress"
+                label="HOF Address"
+                type="textarea"
+                {...register("HOFAddress")}
+                error={errors.HOFAddress ? true : false}
               />
             </Grid>
             <Grid item xs={6}>
               <TextField
+                required
                 fullWidth
                 size="small"
-                id="lastName"
-                name="lastName"
-                label="Last name"
+                id="HOFPhone"
+                name="HOFPhone"
+                label="HOF Phone"
                 type="text"
-                value={formValues.lastName}
-                onChange={handleInputChange}
+                {...register("HOFPhone")}
+                error={errors.HOFPhone ? true : false}
               />
             </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth>
-                <FormLabel>Gender</FormLabel>
-                <RadioGroup
-                  size="small"
-                  name="gender"
-                  value={formValues.gender}
-                  onChange={handleInputChange}
-                  row
-                >
-                  <FormControlLabel
-                    key="male"
-                    value="male"
-                    control={<Radio size="small" />}
-                    label="Male"
-                  />
-                  <FormControlLabel
-                    key="female"
-                    value="female"
-                    control={<Radio size="small" />}
-                    label="Female"
-                  />
-                  <FormControlLabel
-                    key="other"
-                    value="other"
-                    control={<Radio size="small" />}
-                    label="Other"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={6}>
-              <FormLabel>Select Country</FormLabel>
-              <FormControl label="Select Country" fullWidth>
-                <Select
-                  size="small"
-                  name="country"
-                  value={formValues.country}
-                  onChange={handleInputChange}
-                >
-                  <MenuItem key="canada" value="Canada">
-                    Canada
-                  </MenuItem>
-                  <MenuItem key="japan" value="Japan">
-                    Japan
-                  </MenuItem>
-                  <MenuItem key="germany " value="Germany">
-                    Germany
-                  </MenuItem>
-                  <MenuItem key="switzerland " value="Switzerland">
-                    Switzerland
-                  </MenuItem>
-                  <MenuItem key="australia " value="Australia">
-                    Australia
-                  </MenuItem>
-                  <MenuItem key="united_states " value="United States">
-                    United States
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={6}>
-              <FormLabel>Hobby</FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox name="hobby" defaultChecked />}
-                  label="Writing"
-                />
-                <FormControlLabel
-                  control={<Checkbox name="hobby" />}
-                  label="Dance"
-                />
-                <FormControlLabel
-                  control={<Checkbox name="hobby" />}
-                  label="Painting"
-                />
-                <FormControlLabel
-                  control={<Checkbox name="hobby" />}
-                  label="Video Game"
-                />
-              </FormGroup>
-            </Grid>
-            <Grid item xs={6} alignSelf="center">
+            <Grid
+              className="d-flex"
+              item
+              xs={12}
+              alignSelf="center"
+              justifyContent={"center"}
+            >
               <Button
                 variant="contained"
                 color="primary"
