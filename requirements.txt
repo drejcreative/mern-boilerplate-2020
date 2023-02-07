@@ -9,3 +9,16 @@
 8. Reciepts: will have print feature?
 9. Reciepts: will have edit/delete?
 10. Virtualization in table
+
+receipts collection -
+HOF ID
+HOF name
+receipt no
+payment Date
+amount
+mode
+details
+
+
+forms collection - 
+add pending column
