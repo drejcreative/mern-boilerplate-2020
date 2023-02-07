@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import { MARKAZ_CONST } from "../constants";
+import { MARKAZ_CONST, PASSES_HEADER } from "../constants";
 
 // Create styles
 const styles = StyleSheet.create({
@@ -27,6 +27,14 @@ const styles = StyleSheet.create({
   logo: {
     paddingRight: "10px",
     width: 75,
+  },
+  passHeader: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: "10px",
+    fontSize: 14,
   },
   wrapper: {
     display: "flex",
@@ -59,6 +67,9 @@ const Passes = ({ familyMembers = [], HOFITS, formNo, markaz }) => (
           <View style={styles.section} key={fm.its} break={i !== 0}>
             <Image src={"/logo.png"} style={styles.logo} />
             <View style={styles.wrapper}>
+              <View style={styles.passHeader}>
+                <Text>{PASSES_HEADER}</Text>
+              </View>
               <View style={styles.textWrapper}>
                 <Text style={styles.textLabel}>Form number</Text>
                 <Text style={styles.textValue}>{formNo}</Text>

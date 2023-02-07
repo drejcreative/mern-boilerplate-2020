@@ -2,23 +2,26 @@ const TakhmeenForm = require("../models/takhmeenFormModel");
 
 // @desc   Get all from takhmeenform
 // @route  GET /api/v1/takhmeenform
-exports.get = async (req, res, next) => {
+exports.get = async (req, res) => {
   try {
     const list = await TakhmeenForm.find();
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: list,
     });
   } catch (error) {
-    res.send(500).json({
-      success: false,
-      error: "Server error",
-    });
+    console.log("API error", error);
+    if (!res.headersSent) {
+      res.send(500).json({
+        success: false,
+        error: "Server error",
+      });
+    }
   }
 };
 
 // get takhmeen for by ID - to validate if form with this HOF exists
-exports.getByHOF = async (req, res, next) => {
+exports.getByHOF = async (req, res) => {
   try {
     const hofId = req.params.hofid;
     const form = await TakhmeenForm.findOne({ HOFId: hofId });
@@ -26,38 +29,44 @@ exports.getByHOF = async (req, res, next) => {
       form,
       exists: form ? true : false,
     };
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: data,
     });
   } catch (error) {
-    res.send(500).json({
-      success: false,
-      error: "Server error",
-    });
+    console.log("API error", error);
+    if (!res.headersSent) {
+      res.send(500).json({
+        success: false,
+        error: "Server error",
+      });
+    }
   }
 };
 
 // get takhmeen for by form no
-exports.getByFormNo = async (req, res, next) => {
+exports.getByFormNo = async (req, res) => {
   try {
     const formNo = req.params.formno;
     const form = await TakhmeenForm.findOne({ formNo: formNo });
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: form,
     });
   } catch (error) {
-    res.send(500).json({
-      success: false,
-      error: "Server error",
-    });
+    console.log("API error", error);
+    if (!res.headersSent) {
+      res.send(500).json({
+        success: false,
+        error: "Server error",
+      });
+    }
   }
 };
 
 // @desc   Add to takhmeenform
 // @route  POST /api/v1/takhmeenform
-exports.add = async (req, res, next) => {
+exports.add = async (req, res) => {
   try {
     delete req.body.paidAmount;
     const formData = {
@@ -66,31 +75,37 @@ exports.add = async (req, res, next) => {
       paidAmount: 0,
     };
     const form = await TakhmeenForm.create(formData);
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       data: form,
     });
   } catch (error) {
-    res.send(500).json({
-      success: false,
-      error: "Server error",
-    });
+    console.log("API error", error);
+    if (!res.headersSent) {
+      res.send(500).json({
+        success: false,
+        error: "Server error",
+      });
+    }
     return;
   }
 };
 
 // @desc   Update takhmeenform
 // @route  PUT /api/v1/takhmeenform
-exports.update = async (req, res, next) => {
+exports.update = async (req, res) => {
   try {
     const { HOFId } = req.body;
     const updatedForm = await this.updateTakhmeenForm(HOFId, req.body);
-    return res.status(200).json(updatedForm);
+    res.status(200).json(updatedForm);
   } catch (error) {
-    res.send(500).json({
-      success: false,
-      error: "Server error",
-    });
+    console.log("API error", error);
+    if (!res.headersSent) {
+      res.send(500).json({
+        success: false,
+        error: "Server error",
+      });
+    }
   }
 };
 
@@ -107,15 +122,15 @@ exports.updateTakhmeenForm = async (HOFId, data, isAmountUpdate = false) => {
         : data,
       { new: true } // Return updated one
     );
-    return form;
+    form;
   } catch (error) {
-    return error;
+    error;
   }
 };
 
 // @desc   Delete takhmeenform
 // @route  DELETE /api/v1/takhmeenform
-exports.remove = async (req, res, next) => {
+exports.remove = async (req, res) => {
   try {
     console.log(req.body);
     const { _id } = req.body;
@@ -128,7 +143,7 @@ exports.remove = async (req, res, next) => {
     }
 
     await TakhmeenForm.deleteOne();
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: {},
     });

@@ -23,9 +23,12 @@ import {
 } from "../common-components";
 import Header from "../Header";
 import { formService } from "../../services/formService";
+import { receiptService } from "../../services/receiptService";
+import { useNavigate } from "react-router-dom";
 
 const Receipt = (props) => {
   const { startLoading, endLoading, addToastMsg } = useCustomHook();
+  const navigate = useNavigate();
   const takhmeenDetailsInitVal = {
     takhmeenAmount: 0,
     zabihat: 0,
@@ -34,6 +37,8 @@ const Receipt = (props) => {
     chairs: 0,
     paidAmount: 0,
     pendingAmount: 0,
+    formNo: "",
+    HOFName: "",
   };
   const [paymentDate, setPaymentData] = useState(
     dayjs(new Date().toISOString().substring(0, 19))
@@ -65,7 +70,33 @@ const Receipt = (props) => {
   });
   watch("HOFId");
   const { HOFId, mode } = getValues();
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    const vals = getValues();
+    startLoading();
+    try {
+      const data = await receiptService.addToReceipts({
+        ...vals,
+        date: paymentDate,
+        formNo: takhmeenDetails.formNo,
+        HOFName: takhmeenDetails.HOFName,
+      });
+      if (data.success) {
+        addToastMsg("Details saved : " + data._id, "success");
+        reset();
+        navigate("/");
+      } else {
+        throw new Error("Internal server error");
+      }
+    } catch (e) {
+      console.log("error saving form", e);
+      addToastMsg(
+        "Unable to save details, please re validate entered values",
+        "error"
+      );
+    }
+    endLoading();
+  };
+
   // I know its dirty, but got no other way to re render when delete member
   const [render, reRender] = useState(false);
 
@@ -80,7 +111,11 @@ const Receipt = (props) => {
           "warning"
         );
       } else {
-        setTakhmeenDetails(calculateTakhmeenDetails(data.form));
+        setTakhmeenDetails({
+          ...calculateTakhmeenDetails(data.form),
+          formNo: data.form.formNo,
+          HOFName: data.form.HOFName,
+        });
       }
     } catch (e) {
       console.log("error getting form details", e);

@@ -108,6 +108,9 @@ function Row(props) {
         <TableCell>{row.HOFName}</TableCell>
         <TableCell align="right">{row.HOFPhone}</TableCell>
         <TableCell align="right">{row.grandTotal}</TableCell>
+        <TableCell style={{ fontWeight: "bold" }} align="right">
+          {row.grandTotal - row.paidAmount}
+        </TableCell>
         <TableCell>
           <ReactPDF.PDFDownloadLink
             document={
@@ -274,6 +277,9 @@ export default function CollapsibleTable() {
               </TableCell>
               <TableCell style={{ fontWeight: "bold" }} align="right">
                 Total takhmeen amount
+              </TableCell>
+              <TableCell style={{ fontWeight: "bold" }} align="right">
+                Pending amount
               </TableCell>
               <TableCell style={{ fontWeight: "bold" }}>Download</TableCell>
             </TableRow>
