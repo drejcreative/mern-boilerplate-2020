@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -16,27 +16,33 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { RECEIPT_ADD_HEADER } from "../../constants";
-import Store from "../../store/store";
-import { TakhmeenSummary } from "../common-components";
+import {
+  calculateTakhmeenDetails,
+  TakhmeenSummary,
+  useCustomHook,
+} from "../common-components";
 import Header from "../Header";
+import { formService } from "../../services/formService";
 
 const Receipt = (props) => {
-  const [paymentDate, setPaymentData] = useState(
-    dayjs(new Date().toISOString().substring(0, 19))
-  );
-
-  const handleDateChange = (newValue) => {
-    setPaymentData(newValue);
-  };
-
-  const [takhmeenDetails, setTakhmeenDetails] = useState({
+  const { startLoading, endLoading, addToastMsg } = useCustomHook();
+  const takhmeenDetailsInitVal = {
     takhmeenAmount: null,
     zabihat: null,
     iftaari: null,
     niyaaz: null,
     chairs: null,
-  });
-  const { dispatch } = useContext(Store);
+  };
+  const [paymentDate, setPaymentData] = useState(
+    dayjs(new Date().toISOString().substring(0, 19))
+  );
+  const handleDateChange = (newValue) => {
+    setPaymentData(newValue);
+  };
+
+  const [takhmeenDetails, setTakhmeenDetails] = useState(
+    takhmeenDetailsInitVal
+  );
   const initialValues = {
     HOFId: "",
     date: "",
@@ -60,6 +66,28 @@ const Receipt = (props) => {
   const handleSubmit = () => {};
   // I know its dirty, but got no other way to re render when delete member
   const [render, reRender] = useState(false);
+
+  const getFormData = async (e) => {
+    if (!e.target.value) return;
+    startLoading();
+    try {
+      const data = await formService.isFormExistByHOF(e.target.value);
+      if (!data.exists) {
+        addToastMsg(
+          "Data not registered, please fill registration form first",
+          "warning"
+        );
+      } else {
+        setTakhmeenDetails(calculateTakhmeenDetails(data.form));
+      }
+    } catch (e) {
+      console.log("error getting form details", e);
+      addToastMsg("Unable to fetch form details", "error");
+      reset({ ...initialValues });
+      setTakhmeenDetails(takhmeenDetailsInitVal);
+    }
+    endLoading();
+  };
 
   return (
     <>
@@ -86,6 +114,9 @@ const Receipt = (props) => {
                   onChange={(e) => {
                     setValue("HOFId", e.currentTarget?.value ?? "");
                     reRender(!render);
+                  }}
+                  onBlur={(e) => {
+                    getFormData(e);
                   }}
                   error={errors.HOFId ? true : false}
                 />

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
@@ -26,13 +26,7 @@ import {
   Grid,
 } from "@mui/material";
 import Delete from "@mui/icons-material/Delete";
-import Store from "../../store/store";
 import { hofService } from "../../services/hofService";
-import {
-  ADD_TOAST_MSG,
-  END_LOADING,
-  START_LOADING,
-} from "../../store/actionTypes";
 import { formService } from "../../services/formService";
 import {
   FORM_ADD_HEADER,
@@ -40,12 +34,12 @@ import {
   MARKAZ_CONST,
 } from "../../constants";
 import Header from "../Header";
-import { TakhmeenSummary } from "../common-components";
+import { TakhmeenSummary, useCustomHook } from "../common-components";
 
 const MaterialFormComponent = (props) => {
   const routeParams = useParams();
   const navigate = useNavigate();
-  const { dispatch } = useContext(Store);
+  const { startLoading, endLoading, addToastMsg } = useCustomHook();
   const initialValues = {
     markaz: "ZM",
     HOFId: "",
@@ -87,7 +81,7 @@ const MaterialFormComponent = (props) => {
     if (!vals.familyMembers?.length) {
       return addToastMsg("Add atleast one member", "warning");
     }
-    dispatch({ type: START_LOADING });
+    startLoading();
     try {
       if (props.isEdit) {
         await formService.updateForm(getValues());
@@ -105,17 +99,14 @@ const MaterialFormComponent = (props) => {
         "error"
       );
     }
-    dispatch({ type: END_LOADING });
+    endLoading();
   };
 
   const [isPopUpOpen, setPopUpState] = useState(false);
 
-  const addToastMsg = (msg, type) => {
-    dispatch({ type: ADD_TOAST_MSG, payload: { msg, type } });
-  };
   const handleHOFIdBlur = async (e) => {
     if (!e.target.value) return;
-    dispatch({ type: START_LOADING });
+    startLoading();
     try {
       const data = await Promise.all([
         hofService.getMembersByHOF(e.target.value).catch((e) => {
@@ -153,7 +144,7 @@ const MaterialFormComponent = (props) => {
       console.log("unexpected error", e);
       addToastMsg("unexpected error", "error");
     }
-    dispatch({ type: END_LOADING });
+    endLoading();
   };
 
   // I know its dirty, but got no other way to re render when delete member
@@ -163,7 +154,7 @@ const MaterialFormComponent = (props) => {
   useEffect(() => {
     async function t() {
       if (props.isEdit) {
-        dispatch({ type: START_LOADING });
+        startLoading();
         try {
           const data = await formService.getFormbyFormNo(routeParams.formNo);
           reset(data);
@@ -173,7 +164,7 @@ const MaterialFormComponent = (props) => {
           addToastMsg("Unable to fetch form details", "error");
           navigate("/list");
         }
-        dispatch({ type: END_LOADING });
+        endLoading();
       }
     }
     t();
