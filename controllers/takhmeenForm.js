@@ -21,9 +21,10 @@ exports.get = async (req, res, next) => {
 exports.getByHOF = async (req, res, next) => {
   try {
     const hofId = req.params.hofid;
-    const list = await TakhmeenForm.find({ HOFId: hofId });
+    const form = await TakhmeenForm.findOne({ HOFId: hofId });
     const data = {
-      exists: list.length ? true : false,
+      form,
+      exists: form ? true : false,
     };
     return res.status(200).json({
       success: true,
