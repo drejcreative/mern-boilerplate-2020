@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
+import { MARKAZ_CONST } from "../constants";
 
 // Create styles
 const styles = StyleSheet.create({
@@ -20,8 +21,8 @@ const styles = StyleSheet.create({
     padding: 10,
     display: "flex",
     flexDirection: "row",
-    width: "100%",
     alignItems: "center",
+    border: "1px solid black",
   },
   logo: {
     paddingRight: "10px",
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
   },
   textHead: {
     textDecoration: "underline",
+    fontWeight: 700,
   },
 });
 
@@ -64,7 +66,8 @@ const Passes = ({ familyMembers = [], HOFITS, formNo, markaz }) => (
               <View style={styles.textWrapper}>
                 <Text style={styles.textLabel}>Markaz</Text>
                 <Text style={{ ...styles.textValue, ...styles.textHead }}>
-                  {markaz}
+                  {MARKAZ_CONST.find((i) => i.value === markaz)?.displayVal ??
+                    markaz}
                 </Text>
               </View>
               <View style={styles.textWrapper}>

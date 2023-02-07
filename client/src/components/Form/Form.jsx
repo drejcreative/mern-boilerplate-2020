@@ -38,6 +38,7 @@ import {
   CHAIRS_UNIT,
   FORM_ADD_HEADER,
   FORM_EDIT_HEADER,
+  MARKAZ_CONST,
   ZABIHAT_UNIT,
 } from "../../constants";
 import Header from "../Header";
@@ -207,15 +208,13 @@ const MaterialFormComponent = (props) => {
                       defaultValue={"ZM"}
                       {...register("markaz")}
                     >
-                      <MenuItem key="zm" value="ZM">
-                        Zainy Masjid
-                      </MenuItem>
-                      <MenuItem key="bh" value="BH">
-                        Burhani Hall
-                      </MenuItem>
-                      <MenuItem key="jm" value="JM">
-                        Jamali Markaz
-                      </MenuItem>
+                      {MARKAZ_CONST.map((item) => {
+                        return (
+                          <MenuItem key={item.value} value={item.value}>
+                            {item.displayVal}
+                          </MenuItem>
+                        );
+                      })}
                     </Select>
                   </FormControl>
                 </Grid>
