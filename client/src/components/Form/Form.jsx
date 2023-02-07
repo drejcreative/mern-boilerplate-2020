@@ -35,13 +35,12 @@ import {
 } from "../../store/actionTypes";
 import { formService } from "../../services/formService";
 import {
-  CHAIRS_UNIT,
   FORM_ADD_HEADER,
   FORM_EDIT_HEADER,
   MARKAZ_CONST,
-  ZABIHAT_UNIT,
 } from "../../constants";
 import Header from "../Header";
+import { TakhmeenSummary } from "../common-components";
 
 const MaterialFormComponent = (props) => {
   const routeParams = useParams();
@@ -483,44 +482,6 @@ const MemberTable = ({ familyMembers, handleDeleteMember }) => {
               </TableRow>
             );
           })}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
-
-const TakhmeenSummary = ({ takhmeenDetails }) => {
-  return (
-    <TableContainer component={Paper}>
-      <Table size="small" aria-label="collapsible table">
-        <TableHead>
-          <TableRow>
-            <TableCell style={{ fontWeight: "bold" }}>
-              Takhmeen amount
-            </TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Zabihat</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Iftaari</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Niyaaz</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Chair</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Grand Total</TableCell>
-            <TableCell />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell>{takhmeenDetails.takhmeenAmount}</TableCell>
-            <TableCell>{`${takhmeenDetails.zabihat} x ${ZABIHAT_UNIT}`}</TableCell>
-            <TableCell>{takhmeenDetails.iftaari}</TableCell>
-            <TableCell>{takhmeenDetails.niyaaz}</TableCell>
-            <TableCell>{`${takhmeenDetails.chairs} x ${CHAIRS_UNIT}`}</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>
-              {Number(takhmeenDetails.takhmeenAmount) +
-                Number(takhmeenDetails.zabihat * ZABIHAT_UNIT) +
-                Number(takhmeenDetails.iftaari) +
-                Number(takhmeenDetails.niyaaz) +
-                Number(takhmeenDetails.chairs) * CHAIRS_UNIT}
-            </TableCell>
-          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>

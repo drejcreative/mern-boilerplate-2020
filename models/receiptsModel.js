@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const ReceiptsSchema = new mongoose.Schema({
+  receiptNo: {
+    type: String,
+    required: true,
+  },
   formNo: {
     type: String,
     required: true,
@@ -10,10 +14,6 @@ const ReceiptsSchema = new mongoose.Schema({
     required: true,
   },
   HOFName: {
-    type: String,
-    required: true,
-  },
-  receiptNo: {
     type: String,
     required: true,
   },

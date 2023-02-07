@@ -6,7 +6,7 @@ export const FORM_ADD_HEADER =
   "Shehrullah-il-Moazzam 1444 new registration form";
 export const FORM_EDIT_HEADER =
   "Shehrullah-il-Moazzam 1444 edit registration form";
-
+export const RECEIPT_ADD_HEADER = "Shehrullah-il-Moazzam 1444 new receipt";
 export const MARKAZ_CONST = [
   {
     displayVal: "Zainy Masjid",

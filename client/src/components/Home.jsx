@@ -20,6 +20,7 @@ export default function Home() {
         <div className="mb-2">
           {/* <Link to="/newform"> */}
           <Button
+            style={{ marginRight: "10px" }}
             variant="outlined"
             color="secondary"
             startIcon={<PlusIcon />}
@@ -28,6 +29,16 @@ export default function Home() {
             }}
           >
             Add New Form
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            startIcon={<PlusIcon />}
+            onClick={() => {
+              navigate("/newreceipt");
+            }}
+          >
+            Add New Receipt
           </Button>
           {/* </Link> */}
         </div>

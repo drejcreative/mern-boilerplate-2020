@@ -9,6 +9,7 @@ import Layout from "./components/Layout";
 import Home from "./components/Home";
 import ListWrapper from "./components/ListWrapper";
 import Form from "./components/Form/Form";
+import Receipt from "./components/Receipt/Receipt";
 
 const App = () => {
   const initialState = useContext(Store);
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path={"/list"} element={<ListWrapper />} />
           <Route path={"/newform"} element={<Form />} />
+          <Route path={"/newreceipt"} element={<Receipt />} />
           <Route path={"/editform/:formNo"} element={<Form isEdit />} />
         </Routes>
       </Layout>
