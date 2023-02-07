@@ -17,15 +17,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import Store from "../store/store";
-import { formService } from "../services/formService";
-import { END_LOADING, GET_FORMS, START_LOADING } from "../store/actionTypes";
+import { formService } from "../../services/formService";
+import { GET_FORMS } from "../../store/actionTypes";
 import { Link, useNavigate } from "react-router-dom";
-import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../constants";
-import Header from "./Header";
+import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../../constants";
+import Header from "../Header";
 import ReactPDF from "@react-pdf/renderer";
-import Passes from "./PDF";
-import { getGrandTotal } from "./common-components";
+import Passes from "../PDF";
+import { getGrandTotal, useCustomHook } from "../common-components";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -191,9 +190,10 @@ function Row(props) {
   );
 }
 
-export default function CollapsibleTable() {
+export default function FormList() {
   const navigate = useNavigate();
-  const { state, dispatch } = React.useContext(Store);
+  const { state, dispatch, startLoading, endLoading, addToastMsg } =
+    useCustomHook();
   const [origRows, setOrigRows] = React.useState([]);
   const [rows, setRows] = React.useState([]);
 
@@ -212,17 +212,25 @@ export default function CollapsibleTable() {
   }, [origRows]);
 
   const getForms = async () => {
-    dispatch({ type: START_LOADING });
+    startLoading();
     try {
-      const data = await formService.getForms();
-      dispatch({
-        type: GET_FORMS,
-        payload: data,
-      });
+      const { data, isOK } = await formService.getForms();
+      if (isOK) {
+        dispatch({
+          type: GET_FORMS,
+          payload: data,
+        });
+      } else {
+        throw new Error("Internal server error");
+      }
     } catch (e) {
       console.log("failed to fetch form list", e);
+      addToastMsg(
+        "unable to fetch form list, try again after some time",
+        "error"
+      );
     }
-    dispatch({ type: END_LOADING });
+    endLoading();
   };
 
   const requestSearch = (searchedVal) => {
@@ -254,13 +262,14 @@ export default function CollapsibleTable() {
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
-        <IconButton color="secondary" size="large">
-          <AddBox
-            fontSize="inherit"
-            onClick={() => {
-              navigate("/newform");
-            }}
-          />
+        <IconButton
+          color="secondary"
+          size="large"
+          onClick={() => {
+            navigate("/newform");
+          }}
+        >
+          <AddBox fontSize="inherit" />
         </IconButton>
       </div>
       <TableContainer component={Paper}>

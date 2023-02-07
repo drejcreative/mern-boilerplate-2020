@@ -7,9 +7,10 @@ import Store from "./store/store";
 import reducer from "./store/reducer";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
-import ListWrapper from "./components/ListWrapper";
-import Form from "./components/Form/Form";
+import { Form, FormList } from "./components/Form";
 import Receipt from "./components/Receipt/Receipt";
+import Header from "./components/Header";
+import { Page404 } from "./constants";
 
 const App = () => {
   const initialState = useContext(Store);
@@ -20,10 +21,18 @@ const App = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path={"/list"} element={<ListWrapper />} />
           <Route path={"/newform"} element={<Form />} />
-          <Route path={"/newreceipt"} element={<Receipt />} />
           <Route path={"/editform/:formNo"} element={<Form isEdit />} />
+          <Route path={"/formlist"} element={<FormList />} />
+          <Route path={"/newreceipt"} element={<Receipt />} />
+          <Route
+            path={"*"}
+            element={
+              <>
+                <Header header={Page404} />
+              </>
+            }
+          />
         </Routes>
       </Layout>
     </Store.Provider>

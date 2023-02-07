@@ -1,7 +1,7 @@
 export const ZABIHAT_UNIT = 4500;
 export const CHAIRS_UNIT = 300;
 export const PASSES_HEADER = "Shehrullah-il-Moazzam 1444H";
-export const FORM_LIST_HEADER = 
+export const FORM_LIST_HEADER =
   "Shehrullah-il-Moazzam 1444 Niyaaz registration forms";
 export const FORM_ADD_HEADER =
   "Shehrullah-il-Moazzam 1444 new registration form";
@@ -22,3 +22,4 @@ export const MARKAZ_CONST = [
     value: "JM",
   },
 ];
+export const Page404 = "Page not found, go home!";

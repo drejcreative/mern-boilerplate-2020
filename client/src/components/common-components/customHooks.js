@@ -7,7 +7,7 @@ import {
 import Store from "../../store/store";
 
 export const useCustomHook = () => {
-  const { dispatch } = useContext(Store);
+  const { state, dispatch } = useContext(Store);
   const startLoading = () => {
     dispatch({ type: START_LOADING });
   };
@@ -19,6 +19,7 @@ export const useCustomHook = () => {
   };
 
   return {
+    state,
     dispatch,
     startLoading,
     endLoading,

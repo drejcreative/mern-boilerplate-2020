@@ -86,7 +86,7 @@ const MaterialFormComponent = (props) => {
       if (props.isEdit) {
         await formService.updateForm(getValues());
         addToastMsg("Details saved successfully", "success");
-        navigate("/list");
+        navigate("/formlist");
       } else {
         const data = await formService.addToForms(getValues());
         addToastMsg("Details saved : " + data.formNo, "success");
@@ -162,7 +162,7 @@ const MaterialFormComponent = (props) => {
         } catch (e) {
           console.log("error getting form details", e);
           addToastMsg("Unable to fetch form details", "error");
-          navigate("/list");
+          navigate("/formlist");
         }
         endLoading();
       }

@@ -8,7 +8,7 @@ export class receiptService {
   static async getReceipts() {
     try {
       const response = await axios.get(this.url);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }
@@ -17,7 +17,7 @@ export class receiptService {
   static async getReceiptsByHOF(hofId) {
     try {
       const response = await axios.get(this.url + "/" + hofId);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }
@@ -26,7 +26,7 @@ export class receiptService {
   static async addToReceipts(data) {
     try {
       const response = await axios.post(this.url, data);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }

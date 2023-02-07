@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@mui/material";
 import PlusIcon from "@mui/icons-material/PlusOne";
@@ -11,14 +11,19 @@ export default function Home() {
     <div>
       <div>
         <div className="d-flex justify-content-center mb-4">
-          <Link to={"/"}>
-            <img role={"button"} width="150" src="/logo.png" alt="Home" />
-          </Link>
+          <img
+            onClick={() => {
+              navigate("/");
+            }}
+            style={{ cursor: "pointer" }}
+            width="150"
+            src="/logo.png"
+            alt="Home"
+          />
         </div>
       </div>
       <div className="d-flex align-items-center flex-column">
         <div className="mb-2">
-          {/* <Link to="/newform"> */}
           <Button
             style={{ marginRight: "10px" }}
             variant="outlined"
@@ -40,24 +45,20 @@ export default function Home() {
           >
             Add New Receipt
           </Button>
-          {/* </Link> */}
         </div>
         <div className="d-flex justify-content-center flex-row">
           <div className="me-2">
-            {/* <Link to="/list"> */}
             <Button
               variant="contained"
               startIcon={<ViewIcon />}
               onClick={() => {
-                navigate("/list");
+                navigate("/formlist");
               }}
             >
               View forms
             </Button>
-            {/* </Link> */}
           </div>
           <div>
-            {/* <Link to="/reciepts"> */}
             <Button
               variant="contained"
               startIcon={<ViewIcon />}
@@ -67,7 +68,6 @@ export default function Home() {
             >
               View reciepts
             </Button>
-            {/* </Link> */}
           </div>
         </div>
       </div>

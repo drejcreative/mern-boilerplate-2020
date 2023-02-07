@@ -8,7 +8,7 @@ export class formService {
   static async getForms() {
     try {
       const response = await axios.get(this.url);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }
@@ -17,7 +17,7 @@ export class formService {
   static async getFormbyFormNo(formNo) {
     try {
       const response = await axios.get(this.url + "/form/" + formNo);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }
@@ -26,7 +26,7 @@ export class formService {
   static async isFormExistByHOF(id) {
     try {
       const response = await axios.get(this.url + "/" + id);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }
@@ -35,7 +35,7 @@ export class formService {
   static async addToForms(data) {
     try {
       const response = await axios.post(this.url, data);
-      return response.data.data;
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }

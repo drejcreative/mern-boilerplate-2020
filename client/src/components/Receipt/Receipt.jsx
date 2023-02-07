@@ -74,13 +74,13 @@ const Receipt = (props) => {
     const vals = getValues();
     startLoading();
     try {
-      const data = await receiptService.addToReceipts({
+      const { data, isOK } = await receiptService.addToReceipts({
         ...vals,
         date: paymentDate,
         formNo: takhmeenDetails.formNo,
         HOFName: takhmeenDetails.HOFName,
       });
-      if (data.success) {
+      if (isOK) {
         addToastMsg("Details saved : " + data._id, "success");
         reset();
         navigate("/");
@@ -104,7 +104,7 @@ const Receipt = (props) => {
     if (!e.target.value) return;
     startLoading();
     try {
-      const data = await formService.isFormExistByHOF(e.target.value);
+      const { data } = await formService.isFormExistByHOF(e.target.value);
       if (!data.exists) {
         addToastMsg(
           "Data not registered, please fill registration form first",
