@@ -12,19 +12,18 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import AddBox from "@mui/icons-material/AddBox";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { formService } from "../../services/formService";
-import { GET_FORMS } from "../../store/actionTypes";
-import { Link, useNavigate } from "react-router-dom";
-import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../../constants";
+import { GET_RECEIPTS } from "../../store/actionTypes";
+import { RECEIPT_LIST_HEADER } from "../../constants";
 import Header from "../Header";
 import ReactPDF from "@react-pdf/renderer";
-import { Passes } from "../PDF";
-import { getGrandTotal, useCustomHook } from "../common-components";
+import { ReceiptsPDF } from "../PDF";
+import { useCustomHook } from "../common-components";
+import { receiptService } from "../../services/receiptService";
+import { sortReceiptsByHOF } from "../common-components/utility";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -63,17 +62,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function createData(form) {
+function createData(receipts) {
   return {
-    ...form,
-    grandTotal: getGrandTotal(form),
-    takhmeenDetails: {
-      niyaaz: form.niyaaz,
-      iftaari: form.iftaari,
-      zabihat: form.zabihat,
-      takhmeenAmount: form.takhmeenAmount,
-      chairs: form.chairs,
-    },
+    ...receipts,
   };
 }
 
@@ -98,35 +89,10 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          <Link to={"/editform/" + row.formNo}>{row.formNo}</Link>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.markaz}
+          {row.formNo}
         </TableCell>
         <TableCell>{row.HOFId}</TableCell>
         <TableCell>{row.HOFName}</TableCell>
-        <TableCell align="right">{row.HOFPhone}</TableCell>
-        <TableCell align="right">{row.grandTotal}</TableCell>
-        <TableCell style={{ fontWeight: "bold" }} align="right">
-          {row.grandTotal - row.paidAmount}
-        </TableCell>
-        <TableCell>
-          <ReactPDF.PDFDownloadLink
-            document={
-              <Passes
-                familyMembers={row.familyMembers}
-                HOFITS={row.HOFId}
-                formNo={row.formNo}
-                markaz={row.markaz}
-              />
-            }
-            fileName={`${row.formNo}`}
-          >
-            <IconButton size="small" color="secondary">
-              <DownloadIcon />
-            </IconButton>
-          </ReactPDF.PDFDownloadLink>
-        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell
@@ -144,42 +110,48 @@ function Row(props) {
                 component="div"
                 style={{ fontSize: "0.875rem", fontWeight: "bold" }}
               >
-                Takhmeen Details
+                Receipt(s) summary
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="right">Takhmeen Amount</TableCell>
-                    <TableCell align="right">Zabihat</TableCell>
-                    <TableCell align="right">Iftaari</TableCell>
-                    <TableCell align="right">Niyaaz</TableCell>
-                    <TableCell align="right">Chairs</TableCell>
-                    <TableCell align="right" style={{ fontWeight: "bold" }}>
-                      Grand Total
-                    </TableCell>
+                    <TableCell>Receipt No</TableCell>
+                    <TableCell align="right">Amount</TableCell>
+                    <TableCell>Mode</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell component="th" scope="row" align="right">
-                      {row.takhmeenDetails.takhmeenAmount}
-                    </TableCell>
-                    <TableCell align="right">
-                      {`${row.takhmeenDetails.zabihat} x ${ZABIHAT_UNIT}`}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row.takhmeenDetails.iftaari}
-                    </TableCell>
-                    <TableCell align="right">
-                      {row.takhmeenDetails.niyaaz}
-                    </TableCell>
-                    <TableCell align="right">
-                      {`${row.takhmeenDetails.chairs} x ${CHAIRS_UNIT}`}
-                    </TableCell>
-                    <TableCell align="right" style={{ fontWeight: "bold" }}>
-                      {row.grandTotal}
-                    </TableCell>
-                  </TableRow>
+                  {row.subReceipts.map((receipt) => {
+                    return (
+                      <TableRow key={receipt.receiptNo}>
+                        <TableCell component="th" scope="row">
+                          {receipt.receiptNo}
+                        </TableCell>
+                        <TableCell align="right">{receipt.amount}</TableCell>
+                        <TableCell>{receipt.mode}</TableCell>
+                        <TableCell>{receipt.date}</TableCell>
+                        <TableCell>
+                          <ReactPDF.PDFDownloadLink
+                            document={
+                              <ReceiptsPDF
+                                receipt={receipt}
+                                HOFITS={row.HOFId}
+                                HOFName={row.HOFName}
+                                formNo={row.formNo}
+                              />
+                            }
+                            fileName={`${receipt.receiptNo}`}
+                          >
+                            <IconButton size="small" color="secondary">
+                              <DownloadIcon />
+                            </IconButton>
+                          </ReactPDF.PDFDownloadLink>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </Box>
@@ -191,42 +163,41 @@ function Row(props) {
 }
 
 export default function FormList() {
-  const navigate = useNavigate();
   const { state, dispatch, startLoading, endLoading, addToastMsg } =
     useCustomHook();
   const [origRows, setOrigRows] = React.useState([]);
   const [rows, setRows] = React.useState([]);
 
   React.useEffect(() => {
-    getForms();
+    getReceipts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
-    setOrigRows(state.forms);
-  }, [state.forms]);
+    setOrigRows(state.receipts);
+  }, [state.receipts]);
 
   React.useEffect(() => {
-    setRows(state.forms);
+    setRows(state.receipts);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [origRows]);
 
-  const getForms = async () => {
+  const getReceipts = async () => {
     startLoading();
     try {
-      const { data, isOK } = await formService.getForms();
+      const { data, isOK } = await receiptService.getReceipts();
       if (isOK) {
         dispatch({
-          type: GET_FORMS,
-          payload: data,
+          type: GET_RECEIPTS,
+          payload: sortReceiptsByHOF(data),
         });
       } else {
         throw new Error("Internal server error");
       }
     } catch (e) {
-      console.log("failed to fetch form list", e);
+      console.log("failed to fetch receipt list", e);
       addToastMsg(
-        "unable to fetch form list, try again after some time",
+        "unable to fetch receipt list, try again after some time",
         "error"
       );
     }
@@ -239,8 +210,7 @@ export default function FormList() {
       return (
         row.formNo.toLowerCase().includes(searchedVal.toLowerCase()) ||
         row.HOFId.toLowerCase().includes(searchedVal.toLowerCase()) ||
-        row.HOFName.toLowerCase().includes(searchedVal.toLowerCase()) ||
-        row.markaz.toLowerCase().includes(searchedVal.toLowerCase())
+        row.HOFName.toLowerCase().includes(searchedVal.toLowerCase())
       );
     });
     setRows(filteredRows);
@@ -248,7 +218,7 @@ export default function FormList() {
 
   return (
     <>
-      <Header header={FORM_LIST_HEADER} />
+      <Header header={RECEIPT_LIST_HEADER} />
       <div className="d-flex justify-content-between mt-2">
         <Search>
           <SearchIconWrapper>
@@ -262,15 +232,6 @@ export default function FormList() {
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
-        <IconButton
-          color="secondary"
-          size="large"
-          onClick={() => {
-            navigate("/newform");
-          }}
-        >
-          <AddBox fontSize="inherit" />
-        </IconButton>
       </div>
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
@@ -278,24 +239,13 @@ export default function FormList() {
             <TableRow>
               <TableCell />
               <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Markaz</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
-              <TableCell style={{ fontWeight: "bold" }} align="right">
-                HOF Contact
-              </TableCell>
-              <TableCell style={{ fontWeight: "bold" }} align="right">
-                Total takhmeen amount
-              </TableCell>
-              <TableCell style={{ fontWeight: "bold" }} align="right">
-                Pending amount
-              </TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Download</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <Row key={row._id} row={createData(row)} />
+              <Row key={row.HOFId} row={createData(row)} />
             ))}
           </TableBody>
         </Table>

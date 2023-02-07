@@ -1,13 +1,11 @@
 import { nanoid } from "nanoid";
 import {
   GET_FORMS,
-  ADD_TO_FORMS,
-  REMOVE_FROM_FORMS,
-  UPDATE_FORMS,
   START_LOADING,
   END_LOADING,
   REMOVE_TOAST_MSG,
   ADD_TOAST_MSG,
+  GET_RECEIPTS,
 } from "./actionTypes";
 
 export default function reducer(state, action) {
@@ -27,28 +25,10 @@ export default function reducer(state, action) {
         ...state,
         forms: action.payload,
       };
-    case ADD_TO_FORMS:
-      const newItem = action.payload;
+    case GET_RECEIPTS:
       return {
         ...state,
-        forms: [...state.forms, newItem],
-      };
-    case UPDATE_FORMS:
-      const editedList = action.payload;
-      const updatedList = state.forms.map((item) =>
-        item._id === editedList._id ? editedList : item
-      );
-      return {
-        ...state,
-        forms: updatedList,
-      };
-    case REMOVE_FROM_FORMS:
-      const filteredList = state.forms.filter(
-        (item) => item._id !== action.payload
-      );
-      return {
-        ...state,
-        forms: filteredList,
+        receipts: action.payload,
       };
     case ADD_TOAST_MSG:
       return {

@@ -35,7 +35,10 @@ export class formService {
   static async addToForms(data) {
     try {
       const response = await axios.post(this.url, data);
-      return { data: response.data.data, isOK: response.statusText === "OK" };
+      return {
+        data: response.data.data,
+        isOK: response.statusText === "Created",
+      };
     } catch (error) {
       return error;
     }
@@ -43,8 +46,8 @@ export class formService {
 
   static async updateForm(data) {
     try {
-      await axios.put(this.url, data);
-      return data;
+      const response = await axios.put(this.url, data);
+      return { data: response.data.data, isOK: response.statusText === "OK" };
     } catch (error) {
       return error;
     }

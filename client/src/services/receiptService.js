@@ -26,7 +26,10 @@ export class receiptService {
   static async addToReceipts(data) {
     try {
       const response = await axios.post(this.url, data);
-      return { data: response.data.data, isOK: response.statusText === "OK" };
+      return {
+        data: response.data.data,
+        isOK: response.statusText === "Created",
+      };
     } catch (error) {
       return error;
     }

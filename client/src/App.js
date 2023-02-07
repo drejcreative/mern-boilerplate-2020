@@ -8,7 +8,7 @@ import reducer from "./store/reducer";
 import Layout from "./components/Layout";
 import Home from "./components/Home";
 import { Form, FormList } from "./components/Form";
-import Receipt from "./components/Receipt/Receipt";
+import { Receipt, ReceiptList } from "./components/Receipt";
 import Header from "./components/Header";
 import { Page404 } from "./constants";
 
@@ -25,6 +25,7 @@ const App = () => {
           <Route path={"/editform/:formNo"} element={<Form isEdit />} />
           <Route path={"/formlist"} element={<FormList />} />
           <Route path={"/newreceipt"} element={<Receipt />} />
+          <Route path={"/receiptlist"} element={<ReceiptList />} />
           <Route
             path={"*"}
             element={

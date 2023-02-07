@@ -63,7 +63,7 @@ export default function Home() {
               variant="contained"
               startIcon={<ViewIcon />}
               onClick={() => {
-                navigate("/reciepts");
+                navigate("/receiptlist");
               }}
             >
               View reciepts

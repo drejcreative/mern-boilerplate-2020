@@ -222,6 +222,7 @@ const Receipt = (props) => {
                     value={mode}
                     onChange={(e) => {
                       setValue("mode", e.target.value);
+                      reRender(!render);
                     }}
                     row
                   >

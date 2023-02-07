@@ -16,33 +16,48 @@ const TakhmeenSummary = ({ takhmeenDetails }) => {
       <Table size="small" aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell style={{ fontWeight: "bold" }}>
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
               Takhmeen amount
             </TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Zabihat</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Iftaari</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Niyaaz</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Chair</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>Grand Total</TableCell>
-            <TableCell />
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
+              Zabihat
+            </TableCell>
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
+              Iftaari
+            </TableCell>
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
+              Niyaaz
+            </TableCell>
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
+              Chair
+            </TableCell>
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
+              Grand Total
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell>{takhmeenDetails.takhmeenAmount}</TableCell>
-            <TableCell>{`${
+            <TableCell align="right">
+              {Number(takhmeenDetails.takhmeenAmount)}
+            </TableCell>
+            <TableCell align="right">{`${
               takhmeenDetails.zabihat
                 ? "" + takhmeenDetails.zabihat + " x " + ZABIHAT_UNIT
                 : 0
             }`}</TableCell>
-            <TableCell>{takhmeenDetails.iftaari}</TableCell>
-            <TableCell>{takhmeenDetails.niyaaz}</TableCell>
-            <TableCell>{`${
+            <TableCell align="right">
+              {Number(takhmeenDetails.iftaari)}
+            </TableCell>
+            <TableCell align="right">
+              {Number(takhmeenDetails.niyaaz)}
+            </TableCell>
+            <TableCell align="right">{`${
               takhmeenDetails.chairs
                 ? "" + takhmeenDetails.chairs + " x " + CHAIRS_UNIT
                 : 0
             }`}</TableCell>
-            <TableCell style={{ fontWeight: "bold" }}>
+            <TableCell align="right" style={{ fontWeight: "bold" }}>
               {Number(takhmeenDetails.takhmeenAmount) +
                 Number(takhmeenDetails.zabihat * ZABIHAT_UNIT) +
                 Number(takhmeenDetails.iftaari) +

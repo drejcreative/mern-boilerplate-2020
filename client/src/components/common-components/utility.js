@@ -22,3 +22,30 @@ export const calculateTakhmeenDetails = (td) => {
     pendingAmount: grandTotal - td.paidAmount,
   };
 };
+
+const getReceiptDetails = (item) => {
+  return {
+    receiptNo: item.receiptNo,
+    date: new Date(item.date).toDateString(),
+    amount: item.amount,
+    mode: item.mode,
+    details: item.details,
+  };
+};
+export const sortReceiptsByHOF = (receipts = []) => {
+  return Object.values(
+    receipts.reduce((acc, item) => {
+      if (acc[item.HOFId]?.HOFId) {
+        acc[item.HOFId].subReceipts.push(getReceiptDetails(item));
+      } else {
+        acc[item.HOFId] = {
+          HOFId: item.HOFId,
+          HOFName: item.HOFName,
+          formNo: item.formNo,
+          subReceipts: [getReceiptDetails(item)],
+        };
+      }
+      return acc;
+    }, {})
+  );
+};

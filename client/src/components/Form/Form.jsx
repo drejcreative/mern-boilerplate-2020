@@ -84,13 +84,21 @@ const MaterialFormComponent = (props) => {
     startLoading();
     try {
       if (props.isEdit) {
-        await formService.updateForm(getValues());
-        addToastMsg("Details saved successfully", "success");
-        navigate("/formlist");
+        const { isOK } = await formService.updateForm(getValues());
+        if (isOK) {
+          addToastMsg("Details saved successfully", "success");
+          navigate("/formlist");
+        } else {
+          throw new Error("Internal server error");
+        }
       } else {
-        const data = await formService.addToForms(getValues());
-        addToastMsg("Details saved : " + data.formNo, "success");
-        reset();
+        const { data, isOK } = await formService.addToForms(getValues());
+        if (isOK) {
+          addToastMsg("Details saved : " + data.formNo, "success");
+          reset();
+        } else {
+          throw new Error("Internal server error");
+        }
       }
     } catch (e) {
       console.log("error saving form", e);
@@ -115,11 +123,14 @@ const MaterialFormComponent = (props) => {
         }),
         formService.isFormExistByHOF(e.target.value),
       ]);
-      if (data[0]?.length) {
-        const HOFDetails = data[0].find((d) => d.isHOF);
+      if (data[1]?.data?.exists) {
+        addToastMsg("Data already exists for this HOF", "warning");
+        reset();
+      } else if (data[0]?.data?.length) {
+        const HOFDetails = data[0].data.find((d) => d.isHOF);
         setValue(
           "familyMembers",
-          data[0].map((d) => {
+          data[0].data.map((d) => {
             return {
               name: d.Full_Name,
               its: d.ITS_ID,
@@ -134,11 +145,8 @@ const MaterialFormComponent = (props) => {
         });
         setValue("HOFPhone", HOFDetails.HOF_PHONE, { shouldDirty: true });
         reRender(!render);
-      }
-
-      if (data[1]?.exists) {
-        addToastMsg("Data already exists for this HOF", "warning");
-        reset();
+      } else {
+        addToastMsg("HOF and its members details not found", "warning");
       }
     } catch (e) {
       console.log("unexpected error", e);
@@ -156,9 +164,15 @@ const MaterialFormComponent = (props) => {
       if (props.isEdit) {
         startLoading();
         try {
-          const data = await formService.getFormbyFormNo(routeParams.formNo);
-          reset(data);
-          reRender(!render);
+          const { data, isOK } = await formService.getFormbyFormNo(
+            routeParams.formNo
+          );
+          if (isOK) {
+            reset(data);
+            reRender(!render);
+          } else {
+            throw new Error("Internal server error");
+          }
         } catch (e) {
           console.log("error getting form details", e);
           addToastMsg("Unable to fetch form details", "error");
