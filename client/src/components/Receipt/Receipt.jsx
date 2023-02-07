@@ -27,11 +27,13 @@ import { formService } from "../../services/formService";
 const Receipt = (props) => {
   const { startLoading, endLoading, addToastMsg } = useCustomHook();
   const takhmeenDetailsInitVal = {
-    takhmeenAmount: null,
-    zabihat: null,
-    iftaari: null,
-    niyaaz: null,
-    chairs: null,
+    takhmeenAmount: 0,
+    zabihat: 0,
+    iftaari: 0,
+    niyaaz: 0,
+    chairs: 0,
+    paidAmount: 0,
+    pendingAmount: 0,
   };
   const [paymentDate, setPaymentData] = useState(
     dayjs(new Date().toISOString().substring(0, 19))
@@ -134,10 +136,10 @@ const Receipt = (props) => {
                   disabled
                   fullWidth
                   size="small"
-                  id="paymentsTill"
-                  name="paymentsTill"
+                  id="paidAmount"
+                  name="paidAmount"
                   type="number"
-                  value={takhmeenDetails.totalPaymentsTill}
+                  value={takhmeenDetails.paidAmount}
                 />
               </Grid>
               <Grid item xs={6}>
@@ -159,7 +161,7 @@ const Receipt = (props) => {
                   id="amount"
                   name="amount"
                   label="Payment amount"
-                  type="text"
+                  type="number"
                   {...register("amount")}
                 />
               </Grid>

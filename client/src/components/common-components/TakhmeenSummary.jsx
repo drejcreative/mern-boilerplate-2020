@@ -30,14 +30,18 @@ const TakhmeenSummary = ({ takhmeenDetails }) => {
         <TableBody>
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
             <TableCell>{takhmeenDetails.takhmeenAmount}</TableCell>
-            {takhmeenDetails.zabihat ? (
-              <TableCell>{`${takhmeenDetails.zabihat} x ${ZABIHAT_UNIT}`}</TableCell>
-            ) : null}
+            <TableCell>{`${
+              takhmeenDetails.zabihat
+                ? "" + takhmeenDetails.zabihat + " x " + ZABIHAT_UNIT
+                : 0
+            }`}</TableCell>
             <TableCell>{takhmeenDetails.iftaari}</TableCell>
             <TableCell>{takhmeenDetails.niyaaz}</TableCell>
-            {takhmeenDetails.chairs ? (
-              <TableCell>{`${takhmeenDetails.chairs} x ${CHAIRS_UNIT}`}</TableCell>
-            ) : null}
+            <TableCell>{`${
+              takhmeenDetails.chairs
+                ? "" + takhmeenDetails.chairs + " x " + CHAIRS_UNIT
+                : 0
+            }`}</TableCell>
             <TableCell style={{ fontWeight: "bold" }}>
               {Number(takhmeenDetails.takhmeenAmount) +
                 Number(takhmeenDetails.zabihat * ZABIHAT_UNIT) +

@@ -25,6 +25,7 @@ import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../constants";
 import Header from "./Header";
 import ReactPDF from "@react-pdf/renderer";
 import Passes from "./PDF";
+import { getGrandTotal } from "./common-components";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -66,12 +67,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function createData(form) {
   return {
     ...form,
-    grandTotal:
-      Number(form.takhmeenAmount) +
-      Number(form.zabihat * ZABIHAT_UNIT) +
-      Number(form.iftaari) +
-      Number(form.niyaaz) +
-      Number(form.chairs) * CHAIRS_UNIT,
+    grandTotal: getGrandTotal(form),
     takhmeenDetails: {
       niyaaz: form.niyaaz,
       iftaari: form.iftaari,

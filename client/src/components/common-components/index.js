@@ -1,5 +1,10 @@
 import TakhmeenSummary from "./TakhmeenSummary";
-import { calculateTakhmeenDetails } from "./utility";
+import { calculateTakhmeenDetails, getGrandTotal } from "./utility";
 import { useCustomHook } from "./customHooks";
 
-export { TakhmeenSummary, calculateTakhmeenDetails, useCustomHook };
+export {
+  TakhmeenSummary,
+  calculateTakhmeenDetails,
+  getGrandTotal,
+  useCustomHook,
+};
