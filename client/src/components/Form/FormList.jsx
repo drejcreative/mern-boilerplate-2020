@@ -7,24 +7,26 @@ import InputBase from "@mui/material/InputBase";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
 import AddBox from "@mui/icons-material/AddBox";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Link, useNavigate } from "react-router-dom";
 import { formService } from "../../services/formService";
 import { GET_FORMS } from "../../store/actionTypes";
-import { Link, useNavigate } from "react-router-dom";
 import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../../constants";
 import Header from "../Header";
 import ReactPDF from "@react-pdf/renderer";
 import { Passes } from "../PDF";
-import { getGrandTotal, useCustomHook } from "../common-components";
+import {
+  getGrandTotal,
+  useCustomHook,
+  VirtualizedTable,
+} from "../common-components";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -63,7 +65,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function createData(form) {
+const createData = (form) => {
   return {
     ...form,
     grandTotal: getGrandTotal(form),
@@ -75,77 +77,95 @@ function createData(form) {
       chairs: form.chairs,
     },
   };
-}
+};
 
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
+const Row = ({ row }) => {
   return (
     <React.Fragment>
-      <TableRow
-        sx={{
-          "&:last-child td, &:last-child th": { border: 0 },
-        }}
+      <TableCell
+        style={{ borderBottom: 0, paddingBottom: 0 }}
+        component="th"
+        scope="row"
       >
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          <Link to={"/editform/" + row.formNo}>{row.formNo}</Link>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.markaz}
-        </TableCell>
-        <TableCell>{row.HOFId}</TableCell>
-        <TableCell>{row.HOFName}</TableCell>
-        <TableCell align="right">{row.HOFPhone}</TableCell>
-        <TableCell align="right">{row.grandTotal}</TableCell>
-        <TableCell style={{ fontWeight: "bold" }} align="right">
-          {row.grandTotal - row.paidAmount}
-        </TableCell>
-        <TableCell>
-          <ReactPDF.PDFDownloadLink
-            document={
-              <Passes
-                familyMembers={row.familyMembers}
-                HOFITS={row.HOFId}
-                formNo={row.formNo}
-                markaz={row.markaz}
-              />
-            }
-            fileName={`${row.formNo}`}
-          >
-            <IconButton size="small" color="secondary">
-              <DownloadIcon />
-            </IconButton>
-          </ReactPDF.PDFDownloadLink>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell
-          style={{
-            paddingBottom: 0,
-            paddingTop: 0,
-            borderBottom: "2px solid rgba(224, 224, 224, 1)",
-          }}
-          colSpan={12}
+        <Link to={"/editform/" + row.formNo}>{row.formNo}</Link>
+      </TableCell>
+      <TableCell
+        style={{ borderBottom: 0, paddingBottom: 0 }}
+        component="th"
+        scope="row"
+      >
+        {row.markaz}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }}>
+        {row.HOFId}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }}>
+        {row.HOFName}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }} align="right">
+        {row.HOFPhone}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }} align="right">
+        {row.grandTotal}
+      </TableCell>
+      <TableCell
+        style={{ borderBottom: 0, paddingBottom: 0, fontWeight: "bold" }}
+        align="right"
+      >
+        {row.grandTotal - row.paidAmount}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }} align="center">
+        <ReactPDF.PDFDownloadLink
+          document={
+            <Passes
+              familyMembers={row.familyMembers}
+              HOFITS={row.HOFId}
+              formNo={row.formNo}
+              markaz={row.markaz}
+            />
+          }
+          fileName={`${row.formNo}`}
         >
+          <IconButton size="small" color="secondary">
+            <DownloadIcon />
+          </IconButton>
+        </ReactPDF.PDFDownloadLink>
+      </TableCell>
+    </React.Fragment>
+  );
+};
+
+const RowDetails = (row) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <React.Fragment>
+      <TableCell
+        style={{
+          padding: 0,
+          paddingBottom: "16px",
+          borderBottom: "2px solid rgba(224, 224, 224, 1)",
+        }}
+        colSpan={12}
+      >
+        <div className="d-flex flex-column">
+          <div
+            className="d-flex align-items-center"
+            onClick={() => setOpen(!open)}
+            style={{ cursor: "pointer" }}
+          >
+            <IconButton aria-label="expand row" size="small">
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+            <Typography
+              gutterBottom
+              component="div"
+              style={{ fontSize: "0.875rem", marginBottom: 0 }}
+            >
+              Takhmeen summary
+            </Typography>
+          </div>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography
-                gutterBottom
-                component="div"
-                style={{ fontSize: "0.875rem", fontWeight: "bold" }}
-              >
-                Takhmeen Details
-              </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
@@ -184,11 +204,32 @@ function Row(props) {
               </Table>
             </Box>
           </Collapse>
-        </TableCell>
-      </TableRow>
+        </div>
+      </TableCell>
     </React.Fragment>
   );
-}
+};
+
+const fixedHeaderContent = () => {
+  return (
+    <TableRow>
+      <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
+      <TableCell style={{ fontWeight: "bold" }}>Markaz</TableCell>
+      <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
+      <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
+      <TableCell style={{ fontWeight: "bold" }} align="right">
+        HOF Contact
+      </TableCell>
+      <TableCell style={{ fontWeight: "bold" }} align="right">
+        Total takhmeen amount
+      </TableCell>
+      <TableCell style={{ fontWeight: "bold" }} align="right">
+        Pending amount
+      </TableCell>
+      <TableCell style={{ fontWeight: "bold" }}>Download</TableCell>
+    </TableRow>
+  );
+};
 
 export default function FormList() {
   const navigate = useNavigate();
@@ -203,11 +244,11 @@ export default function FormList() {
   }, []);
 
   React.useEffect(() => {
-    setOrigRows(state.forms);
+    setOrigRows(state.forms.map((i) => createData(i)));
   }, [state.forms]);
 
   React.useEffect(() => {
-    setRows(state.forms);
+    setRows(origRows);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [origRows]);
 
@@ -224,7 +265,6 @@ export default function FormList() {
         throw new Error("Internal server error");
       }
     } catch (e) {
-      console.log("failed to fetch form list", e);
       addToastMsg(
         "unable to fetch form list, try again after some time",
         "error"
@@ -272,34 +312,14 @@ export default function FormList() {
           <AddBox fontSize="inherit" />
         </IconButton>
       </div>
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Markaz</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
-              <TableCell style={{ fontWeight: "bold" }} align="right">
-                HOF Contact
-              </TableCell>
-              <TableCell style={{ fontWeight: "bold" }} align="right">
-                Total takhmeen amount
-              </TableCell>
-              <TableCell style={{ fontWeight: "bold" }} align="right">
-                Pending amount
-              </TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Download</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <Row key={row._id} row={createData(row)} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {
+        <VirtualizedTable
+          rows={rows}
+          Row={Row}
+          RowDetails={RowDetails}
+          fixedHeaderContent={fixedHeaderContent}
+        />
+      }
     </>
   );
 }

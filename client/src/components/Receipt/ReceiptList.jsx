@@ -7,11 +7,9 @@ import InputBase from "@mui/material/InputBase";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
 import SearchIcon from "@mui/icons-material/Search";
 import DownloadIcon from "@mui/icons-material/Download";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -21,7 +19,7 @@ import { RECEIPT_LIST_HEADER } from "../../constants";
 import Header from "../Header";
 import ReactPDF from "@react-pdf/renderer";
 import { ReceiptsPDF } from "../PDF";
-import { useCustomHook } from "../common-components";
+import { useCustomHook, VirtualizedTable } from "../common-components";
 import { receiptService } from "../../services/receiptService";
 import { sortReceiptsByHOF } from "../common-components/utility";
 
@@ -62,56 +60,56 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function createData(receipts) {
-  return {
-    ...receipts,
-  };
-}
-
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
+const Row = ({ row }) => {
   return (
     <React.Fragment>
-      <TableRow
-        sx={{
-          "&:last-child td, &:last-child th": { border: 0 },
-        }}
+      <TableCell
+        style={{ borderBottom: 0, paddingBottom: 0 }}
+        component="th"
+        scope="row"
       >
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
+        {row.formNo}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }}>
+        {row.HOFId}
+      </TableCell>
+      <TableCell style={{ borderBottom: 0, paddingBottom: 0 }}>
+        {row.HOFName}
+      </TableCell>
+    </React.Fragment>
+  );
+};
+const RowDetails = (row) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <React.Fragment>
+      <TableCell
+        style={{
+          padding: 0,
+          paddingBottom: "16px",
+          borderBottom: "2px solid rgba(224, 224, 224, 1)",
+        }}
+        colSpan={12}
+      >
+        <div className="d-flex flex-column">
+          <div
+            className="d-flex align-items-center"
             onClick={() => setOpen(!open)}
+            style={{ cursor: "pointer" }}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.formNo}
-        </TableCell>
-        <TableCell>{row.HOFId}</TableCell>
-        <TableCell>{row.HOFName}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell
-          style={{
-            paddingBottom: 0,
-            paddingTop: 0,
-            borderBottom: "2px solid rgba(224, 224, 224, 1)",
-          }}
-          colSpan={12}
-        >
+            <IconButton aria-label="expand row" size="small">
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+            <Typography
+              gutterBottom
+              component="div"
+              style={{ fontSize: "0.875rem", marginBottom: 0 }}
+            >
+              Receipt(s) summary
+            </Typography>
+          </div>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography
-                gutterBottom
-                component="div"
-                style={{ fontSize: "0.875rem", fontWeight: "bold" }}
-              >
-                Receipt(s) summary
-              </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
@@ -156,11 +154,21 @@ function Row(props) {
               </Table>
             </Box>
           </Collapse>
-        </TableCell>
-      </TableRow>
+        </div>
+      </TableCell>
     </React.Fragment>
   );
-}
+};
+
+const fixedHeaderContent = () => {
+  return (
+    <TableRow>
+      <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
+      <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
+      <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
+    </TableRow>
+  );
+};
 
 export default function FormList() {
   const { state, dispatch, startLoading, endLoading, addToastMsg } =
@@ -233,23 +241,12 @@ export default function FormList() {
           />
         </Search>
       </div>
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>HOF ID</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>HOF Name</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <Row key={row.HOFId} row={createData(row)} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <VirtualizedTable
+        rows={rows}
+        Row={Row}
+        RowDetails={RowDetails}
+        fixedHeaderContent={fixedHeaderContent}
+      />
     </>
   );
 }
