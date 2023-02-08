@@ -1,5 +1,10 @@
 import TakhmeenSummary from "./TakhmeenSummary";
-import { calculateTakhmeenDetails, getGrandTotal } from "./utility";
+import {
+  calculateTakhmeenDetails,
+  getGrandTotal,
+  downLoadPasses,
+  downloadReceipts,
+} from "./utility";
 import { useCustomHook } from "./customHooks";
 import VirtualizedTable from "./VirtualizedTable";
 export {
@@ -8,4 +13,6 @@ export {
   getGrandTotal,
   useCustomHook,
   VirtualizedTable,
+  downLoadPasses,
+  downloadReceipts,
 };

@@ -1,4 +1,6 @@
+import ReactPDF from "@react-pdf/renderer";
 import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../../constants";
+import { Passes, ReceiptsPDF } from "../PDF";
 
 export const getGrandTotal = (takhmeenDetails) => {
   return (
@@ -48,4 +50,40 @@ export const sortReceiptsByHOF = (receipts = []) => {
       return acc;
     }, {})
   );
+};
+
+const downloadPDF = (blob, fileName) => {
+  const url = window.URL.createObjectURL(blob);
+  let aTag = document.createElement("a");
+  aTag.href = url;
+  aTag.style = "display: none";
+  aTag.download = fileName;
+  document.body.appendChild(aTag);
+  aTag.click();
+  return;
+};
+
+export const downLoadPasses = async (row) => {
+  const blob = await ReactPDF.pdf(
+    <Passes
+      familyMembers={row.familyMembers}
+      HOFITS={row.HOFId}
+      formNo={row.formNo}
+      markaz={row.markaz}
+    />
+  ).toBlob();
+  downloadPDF(blob, `${row.formNo}`);
+};
+
+export const downloadReceipts = async (props) => {
+  const { receipt, row } = props;
+  const blob = await ReactPDF.pdf(
+    <ReceiptsPDF
+      receipt={receipt}
+      HOFITS={row.HOFId}
+      HOFName={row.HOFName}
+      formNo={row.formNo}
+    />
+  ).toBlob();
+  downloadPDF(blob, `${receipt.receiptNo}`);
 };

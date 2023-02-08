@@ -20,9 +20,8 @@ import { formService } from "../../services/formService";
 import { GET_FORMS } from "../../store/actionTypes";
 import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../../constants";
 import Header from "../Header";
-import ReactPDF from "@react-pdf/renderer";
-import { Passes } from "../PDF";
 import {
+  downLoadPasses,
   getGrandTotal,
   useCustomHook,
   VirtualizedTable,
@@ -115,21 +114,15 @@ const Row = ({ row }) => {
         {row.grandTotal - row.paidAmount}
       </TableCell>
       <TableCell style={{ borderBottom: 0, paddingBottom: 0 }} align="center">
-        <ReactPDF.PDFDownloadLink
-          document={
-            <Passes
-              familyMembers={row.familyMembers}
-              HOFITS={row.HOFId}
-              formNo={row.formNo}
-              markaz={row.markaz}
-            />
-          }
-          fileName={`${row.formNo}`}
+        <IconButton
+          size="small"
+          color="secondary"
+          onClick={() => {
+            downLoadPasses(row);
+          }}
         >
-          <IconButton size="small" color="secondary">
-            <DownloadIcon />
-          </IconButton>
-        </ReactPDF.PDFDownloadLink>
+          <DownloadIcon />
+        </IconButton>
       </TableCell>
     </React.Fragment>
   );
@@ -137,6 +130,7 @@ const Row = ({ row }) => {
 
 const RowDetails = (row) => {
   const [open, setOpen] = React.useState(false);
+
   return (
     <React.Fragment>
       <TableCell

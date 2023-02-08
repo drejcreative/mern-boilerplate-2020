@@ -17,11 +17,12 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { GET_RECEIPTS } from "../../store/actionTypes";
 import { RECEIPT_LIST_HEADER } from "../../constants";
 import Header from "../Header";
-import ReactPDF from "@react-pdf/renderer";
-import { ReceiptsPDF } from "../PDF";
 import { useCustomHook, VirtualizedTable } from "../common-components";
 import { receiptService } from "../../services/receiptService";
-import { sortReceiptsByHOF } from "../common-components/utility";
+import {
+  downloadReceipts,
+  sortReceiptsByHOF,
+} from "../common-components/utility";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -131,21 +132,15 @@ const RowDetails = (row) => {
                         <TableCell>{receipt.mode}</TableCell>
                         <TableCell>{receipt.date}</TableCell>
                         <TableCell>
-                          <ReactPDF.PDFDownloadLink
-                            document={
-                              <ReceiptsPDF
-                                receipt={receipt}
-                                HOFITS={row.HOFId}
-                                HOFName={row.HOFName}
-                                formNo={row.formNo}
-                              />
-                            }
-                            fileName={`${receipt.receiptNo}`}
+                          <IconButton
+                            size="small"
+                            color="secondary"
+                            onClick={() => {
+                              downloadReceipts({ receipt: receipt, row: row });
+                            }}
                           >
-                            <IconButton size="small" color="secondary">
-                              <DownloadIcon />
-                            </IconButton>
-                          </ReactPDF.PDFDownloadLink>
+                            <DownloadIcon />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     );
