@@ -198,7 +198,7 @@ export default function FormList() {
         throw new Error("Internal server error");
       }
     } catch (e) {
-      console.log("failed to fetch receipt list", e);
+      console.error("failed to fetch receipt list", e);
       addToastMsg(
         "unable to fetch receipt list, try again after some time",
         "error"

@@ -21,7 +21,6 @@ const VirtualizedTable = (parentProps) => {
       ),
       TableHead,
       TableRow: ({ item: _item, ...props }) => {
-        console.log(_item, props);
         return (
           <React.Fragment>
             <TableRow {...props} />

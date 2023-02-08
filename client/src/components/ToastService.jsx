@@ -20,7 +20,7 @@ const ToastService = () => {
             key={"snack" + id}
             open={true}
             autoHideDuration={6000}
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
             onClose={(e, r) => {
               handleClose(e, r, { type: REMOVE_TOAST_MSG, payload: { id } });
             }}

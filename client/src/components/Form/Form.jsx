@@ -47,11 +47,11 @@ const MaterialFormComponent = (props) => {
     HOFAddress: "",
     HOFPhone: "",
     familyMembers: [],
-    takhmeenAmount: null,
-    zabihat: null,
-    iftaari: null,
-    niyaaz: null,
-    chairs: null,
+    takhmeenAmount: 0,
+    zabihat: 0,
+    iftaari: 0,
+    niyaaz: 0,
+    chairs: 0,
     comments: "",
   };
   const {
@@ -67,6 +67,8 @@ const MaterialFormComponent = (props) => {
   });
   watch("HOFId", "familyMembers");
   const {
+    HOFId,
+    HOFAddress,
     familyMembers,
     HOFName,
     HOFPhone,
@@ -75,6 +77,7 @@ const MaterialFormComponent = (props) => {
     iftaari,
     niyaaz,
     chairs,
+    comments,
   } = getValues();
   const handleSubmit = async () => {
     const vals = getValues();
@@ -101,7 +104,7 @@ const MaterialFormComponent = (props) => {
         }
       }
     } catch (e) {
-      console.log("error saving form", e);
+      console.error("error saving form", e);
       addToastMsg(
         "Unable to save details, please re validate entered values",
         "error"
@@ -118,7 +121,7 @@ const MaterialFormComponent = (props) => {
     try {
       const data = await Promise.all([
         hofService.getMembersByHOF(e.target.value).catch((e) => {
-          console.log("unable to fetch members list", e);
+          console.error("unable to fetch members list", e);
           addToastMsg("unable to fetch members list", "error");
         }),
         formService.isFormExistByHOF(e.target.value),
@@ -144,12 +147,16 @@ const MaterialFormComponent = (props) => {
           shouldDirty: true,
         });
         setValue("HOFPhone", HOFDetails.HOF_PHONE, { shouldDirty: true });
+        if (e.target.value !== HOFDetails.HOF_ID) {
+          setValue("HOFId", HOFDetails.HOF_ID);
+        }
         reRender(!render);
       } else {
         addToastMsg("HOF and its members details not found", "warning");
+        reset();
       }
     } catch (e) {
-      console.log("unexpected error", e);
+      console.error("unexpected error", e);
       addToastMsg("unexpected error", "error");
     }
     endLoading();
@@ -168,13 +175,13 @@ const MaterialFormComponent = (props) => {
             routeParams.formNo
           );
           if (isOK) {
-            reset(data);
+            reset({ ...data });
             reRender(!render);
           } else {
             throw new Error("Internal server error");
           }
         } catch (e) {
-          console.log("error getting form details", e);
+          console.error("error getting form details", e);
           addToastMsg("Unable to fetch form details", "error");
           navigate("/formlist");
         }
@@ -237,7 +244,11 @@ const MaterialFormComponent = (props) => {
                     label="HOF ID"
                     type="text"
                     disabled={props.isEdit}
-                    {...register("HOFId")}
+                    value={HOFId}
+                    onChange={(e) => {
+                      setValue("HOFId", e.currentTarget?.value ?? "");
+                      reRender(!render);
+                    }}
                     onBlur={handleHOFIdBlur}
                     error={errors.HOFId ? true : false}
                   />
@@ -269,7 +280,11 @@ const MaterialFormComponent = (props) => {
                   name="HOFAddress"
                   label="HOF Address"
                   type="textarea"
-                  {...register("HOFAddress")}
+                  value={HOFAddress}
+                  onChange={(e) => {
+                    setValue("HOFAddress", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
                   error={errors.HOFAddress ? true : false}
                 />
               </Grid>
@@ -408,7 +423,11 @@ const MaterialFormComponent = (props) => {
                   name="comments"
                   label="Comments"
                   type="textarea"
-                  {...register("comments")}
+                  value={comments}
+                  onChange={(e) => {
+                    setValue("comments", e.currentTarget?.value ?? "");
+                    reRender(!render);
+                  }}
                 />
               </Grid>
               <Grid

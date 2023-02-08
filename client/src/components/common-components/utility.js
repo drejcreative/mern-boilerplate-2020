@@ -1,5 +1,5 @@
 import ReactPDF from "@react-pdf/renderer";
-import { CHAIRS_UNIT, ZABIHAT_UNIT } from "../../constants";
+import { CHAIRS_UNIT, PAYMENT_MODE_CONST, ZABIHAT_UNIT } from "../../constants";
 import { Passes, ReceiptsPDF } from "../PDF";
 
 export const getGrandTotal = (takhmeenDetails) => {
@@ -30,7 +30,7 @@ const getReceiptDetails = (item) => {
     receiptNo: item.receiptNo,
     date: new Date(item.date).toDateString(),
     amount: item.amount,
-    mode: item.mode,
+    mode: PAYMENT_MODE_CONST[item.mode] ?? item.mode,
     details: item.details,
   };
 };

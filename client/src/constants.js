@@ -25,4 +25,9 @@ export const MARKAZ_CONST = [
     value: "JM",
   },
 ];
+export const PAYMENT_MODE_CONST = {
+  cash: "Cash",
+  cheque: "Cheque",
+  online: "Online",
+};
 export const Page404 = "Page not found, go home!";

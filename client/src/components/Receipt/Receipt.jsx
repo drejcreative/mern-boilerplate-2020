@@ -88,7 +88,7 @@ const Receipt = (props) => {
         throw new Error("Internal server error");
       }
     } catch (e) {
-      console.log("error saving form", e);
+      console.error("error saving form", e);
       addToastMsg(
         "Unable to save details, please re validate entered values",
         "error"
@@ -118,7 +118,7 @@ const Receipt = (props) => {
         });
       }
     } catch (e) {
-      console.log("error getting form details", e);
+      console.error("error getting form details", e);
       addToastMsg("Unable to fetch form details", "error");
       reset({ ...initialValues });
       setTakhmeenDetails(takhmeenDetailsInitVal);
