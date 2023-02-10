@@ -34,6 +34,7 @@ const getReceiptDetails = (item) => {
     details: item.details,
   };
 };
+
 export const sortReceiptsByHOF = (receipts = []) => {
   return Object.values(
     receipts.reduce((acc, item) => {
@@ -86,4 +87,53 @@ export const downloadReceipts = async (props) => {
     />
   ).toBlob();
   downloadPDF(blob, `${receipt.receiptNo}`);
+};
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+const getComparator = (order, orderBy) => {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+};
+
+const stableSort = (array, comparator) => {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+};
+
+export const filterRows = (rows = [], filters) => {
+  let filteredRows = rows.filter((i) => filters.selectedMarkaz[i.markaz]);
+  if (filters.sort.orderBy) {
+    filteredRows = stableSort(
+      rows,
+      getComparator(filters.sort.order, filters.sort.orderBy)
+    );
+  }
+  if (filters.searchedVal.trim()) {
+    filteredRows = filteredRows.filter((row) => {
+      return (
+        row.formNo.toLowerCase().includes(filters.searchedVal.toLowerCase()) ||
+        row.HOFId.toLowerCase().includes(filters.searchedVal.toLowerCase()) ||
+        row.HOFName.toLowerCase().includes(filters.searchedVal.toLowerCase()) ||
+        row.markaz.toLowerCase().includes(filters.searchedVal.toLowerCase())
+      );
+    });
+  }
+  return filteredRows;
 };

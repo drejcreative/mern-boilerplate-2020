@@ -4,15 +4,18 @@ import {
   getGrandTotal,
   downLoadPasses,
   downloadReceipts,
+  filterRows,
 } from "./utility";
 import { useCustomHook } from "./customHooks";
-import VirtualizedTable from "./VirtualizedTable";
+import { VirtualizedTable, StickyHeaderTable } from "./VirtualizedTable";
 export {
   TakhmeenSummary,
   calculateTakhmeenDetails,
   getGrandTotal,
   useCustomHook,
   VirtualizedTable,
+  StickyHeaderTable,
   downLoadPasses,
   downloadReceipts,
+  filterRows,
 };

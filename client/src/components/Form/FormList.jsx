@@ -18,14 +18,26 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Link, useNavigate } from "react-router-dom";
 import { formService } from "../../services/formService";
 import { GET_FORMS } from "../../store/actionTypes";
-import { CHAIRS_UNIT, FORM_LIST_HEADER, ZABIHAT_UNIT } from "../../constants";
+import {
+  CHAIRS_UNIT,
+  FORM_LIST_HEADER,
+  MARKAZ_CONST,
+  ZABIHAT_UNIT,
+} from "../../constants";
 import Header from "../Header";
 import {
   downLoadPasses,
+  filterRows,
   getGrandTotal,
   useCustomHook,
   VirtualizedTable,
 } from "../common-components";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  TableSortLabel,
+} from "@mui/material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -65,9 +77,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const createData = (form) => {
+  const grandTotal = getGrandTotal(form);
   return {
     ...form,
-    grandTotal: getGrandTotal(form),
+    grandTotal,
+    pendingAmount: grandTotal - form.paidAmount,
     takhmeenDetails: {
       niyaaz: form.niyaaz,
       iftaari: form.iftaari,
@@ -111,7 +125,7 @@ const Row = ({ row }) => {
         style={{ borderBottom: 0, paddingBottom: 0, fontWeight: "bold" }}
         align="right"
       >
-        {row.grandTotal - row.paidAmount}
+        {row.pendingAmount}
       </TableCell>
       <TableCell style={{ borderBottom: 0, paddingBottom: 0 }} align="center">
         <IconButton
@@ -204,7 +218,8 @@ const RowDetails = (row) => {
   );
 };
 
-const fixedHeaderContent = () => {
+const FixedHeaderContent = (props) => {
+  const { orderBy, order, sortHandler } = props ?? {};
   return (
     <TableRow>
       <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
@@ -214,11 +229,37 @@ const fixedHeaderContent = () => {
       <TableCell style={{ fontWeight: "bold" }} align="right">
         HOF Contact
       </TableCell>
-      <TableCell style={{ fontWeight: "bold" }} align="right">
-        Total takhmeen amount
+      <TableCell
+        style={{ fontWeight: "bold" }}
+        align="right"
+        sortDirection={orderBy === "grandTotal" ? order : false}
+      >
+        <TableSortLabel
+          active={orderBy === "grandTotal"}
+          direction={orderBy === "grandTotal" ? order : "asc"}
+          onClick={(e) => {
+            e.preventDefault();
+            sortHandler("grandTotal");
+          }}
+        >
+          Total takhmeen amount
+        </TableSortLabel>
       </TableCell>
-      <TableCell style={{ fontWeight: "bold" }} align="right">
-        Pending amount
+      <TableCell
+        style={{ fontWeight: "bold" }}
+        align="right"
+        sortDirection={orderBy === "pendingAmount" ? order : false}
+      >
+        <TableSortLabel
+          active={orderBy === "pendingAmount"}
+          direction={orderBy === "pendingAmount" ? order : "asc"}
+          onClick={(e) => {
+            e.preventDefault();
+            sortHandler("pendingAmount");
+          }}
+        >
+          Pending amount
+        </TableSortLabel>
       </TableCell>
       <TableCell style={{ fontWeight: "bold" }}>Download</TableCell>
     </TableRow>
@@ -231,6 +272,17 @@ export default function FormList() {
     useCustomHook();
   const [origRows, setOrigRows] = React.useState([]);
   const [rows, setRows] = React.useState([]);
+  const [searchedVal, setSearchedVal] = React.useState("");
+  const [sort, setSort] = React.useState({
+    orderBy: "",
+    order: "",
+  });
+  const [selectedMarkaz, setSelectedMarkaz] = React.useState(
+    MARKAZ_CONST.reduce((acc, i) => {
+      acc[i.value] = true;
+      return acc;
+    }, {})
+  );
 
   React.useEffect(() => {
     getForms();
@@ -238,13 +290,13 @@ export default function FormList() {
   }, []);
 
   React.useEffect(() => {
-    setOrigRows(state.forms.map((i) => createData(i)));
-  }, [state.forms]);
-
-  React.useEffect(() => {
-    setRows(origRows);
+    setRows(filterRows(origRows, { searchedVal, sort, selectedMarkaz }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [origRows]);
+
+  React.useEffect(() => {
+    setOrigRows(state.forms.map((i) => createData(i)));
+  }, [state.forms]);
 
   const getForms = async () => {
     startLoading();
@@ -267,17 +319,14 @@ export default function FormList() {
     endLoading();
   };
 
-  const requestSearch = (searchedVal) => {
-    if (!searchedVal.trim()) return setRows([...origRows]);
-    const filteredRows = origRows.filter((row) => {
-      return (
-        row.formNo.toLowerCase().includes(searchedVal.toLowerCase()) ||
-        row.HOFId.toLowerCase().includes(searchedVal.toLowerCase()) ||
-        row.HOFName.toLowerCase().includes(searchedVal.toLowerCase()) ||
-        row.markaz.toLowerCase().includes(searchedVal.toLowerCase())
-      );
-    });
-    setRows(filteredRows);
+  const sortHandler = (property) => {
+    const isAsc = sort.orderBy === property && sort.order === "asc";
+    const val = {
+      orderBy: property,
+      order: isAsc ? "desc" : "asc",
+    };
+    setSort(val);
+    setRows(filterRows(origRows, { searchedVal, selectedMarkaz, sort: val }));
   };
 
   return (
@@ -289,13 +338,50 @@ export default function FormList() {
             <SearchIcon />
           </SearchIconWrapper>
           <StyledInputBase
+            value={searchedVal}
             onChange={(e) => {
-              requestSearch(e?.currentTarget?.value ?? "");
+              const val = e?.currentTarget?.value ?? "";
+              setSearchedVal(val);
+              setRows(
+                filterRows(origRows, { searchedVal: val, selectedMarkaz, sort })
+              );
             }}
             placeholder="Search…"
             inputProps={{ "aria-label": "search" }}
           />
         </Search>
+        <FormGroup row>
+          {MARKAZ_CONST.map((item) => {
+            return (
+              <FormControlLabel
+                key={item.value}
+                label={item.displayVal}
+                value={item.displayVal}
+                labelPlacement={"start"}
+                control={
+                  <Checkbox
+                    name={item.value}
+                    checked={selectedMarkaz[item.value]}
+                    onChange={(e) => {
+                      const val = {
+                        ...selectedMarkaz,
+                        [e.target.name]: e.target.checked,
+                      };
+                      setSelectedMarkaz(val);
+                      setRows(
+                        filterRows(origRows, {
+                          searchedVal,
+                          selectedMarkaz: val,
+                          sort,
+                        })
+                      );
+                    }}
+                  />
+                }
+              />
+            );
+          })}
+        </FormGroup>
         <IconButton
           color="secondary"
           size="large"
@@ -311,7 +397,10 @@ export default function FormList() {
           rows={rows}
           Row={Row}
           RowDetails={RowDetails}
-          fixedHeaderContent={fixedHeaderContent}
+          FixedHeaderContent={FixedHeaderContent}
+          order={sort.order}
+          orderBy={sort.orderBy}
+          sortHandler={sortHandler}
         />
       }
     </>

@@ -1,3 +1,4 @@
+const countersModel = require("../models/countersModel");
 const TakhmeenForm = require("../models/takhmeenFormModel");
 
 // @desc   Get all from takhmeenform
@@ -69,9 +70,14 @@ exports.getByFormNo = async (req, res) => {
 exports.add = async (req, res) => {
   try {
     delete req.body.paidAmount;
+    const counterSeq = await countersModel.findByIdAndUpdate(
+      { _id: req.body.markaz },
+      { $inc: { seq: 1 } },
+      { new: true }
+    );
     const formData = {
       ...req.body,
-      formNo: `${req.body.markaz}-${Date.now()}`,
+      formNo: `${req.body.markaz}-${counterSeq?.seq ?? Date.now()}`,
       paidAmount: 0,
     };
     const form = await TakhmeenForm.create(formData);
