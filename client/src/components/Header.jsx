@@ -14,7 +14,7 @@ const Header = (props) => {
           alt="Home"
         />
       </Link>
-      <Typography variant="h4" component="h4">
+      <Typography variant="h4" component="h4" color={"#966919"}>
         {props.header}
       </Typography>
     </div>
