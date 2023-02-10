@@ -145,6 +145,14 @@ const ReceiptsPDF = ({ receipt, HOFITS, HOFName, formNo }) => (
               <Text style={styles.textLabel}>Payment date</Text>
               <Text style={styles.textValue}>{receipt.date}</Text>
             </View>
+            {receipt.details ? (
+              <View style={styles.textWrapper}>
+                <Text style={styles.textLabel}>Payment remarks</Text>
+                <Text style={styles.textValue}>{receipt.details}</Text>
+              </View>
+            ) : (
+              ""
+            )}
           </View>
         </View>
       </View>
