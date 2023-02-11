@@ -155,7 +155,7 @@ const RowDetails = (row) => {
   );
 };
 
-const fixedHeaderContent = () => {
+const FixedHeaderContent = () => {
   return (
     <TableRow>
       <TableCell style={{ fontWeight: "bold" }}>Form no.</TableCell>
@@ -240,7 +240,7 @@ export default function FormList() {
         rows={rows}
         Row={Row}
         RowDetails={RowDetails}
-        fixedHeaderContent={fixedHeaderContent}
+        FixedHeaderContent={FixedHeaderContent}
       />
     </>
   );

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 import PlusIcon from "@mui/icons-material/PlusOne";
 import ViewIcon from "@mui/icons-material/ViewList";
+import ChartIcon from "@mui/icons-material/BarChart";
 import { HOME_HEADER } from "../constants";
 
 export default function Home() {
@@ -73,6 +74,17 @@ export default function Home() {
               View reciepts
             </Button>
           </div>
+        </div>
+        <div className="mt-2">
+          <Button
+            variant="contained"
+            startIcon={<ChartIcon />}
+            onClick={() => {
+              navigate("/dashboard");
+            }}
+          >
+            Dashboard
+          </Button>
         </div>
       </div>
     </div>

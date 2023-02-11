@@ -5,6 +5,9 @@ import {
   downLoadPasses,
   downloadReceipts,
   filterRows,
+  getDashboardMetric,
+  radialChartConfig,
+  barChartConfig,
 } from "./utility";
 import { useCustomHook } from "./customHooks";
 import { VirtualizedTable, StickyHeaderTable } from "./VirtualizedTable";
@@ -18,4 +21,7 @@ export {
   downLoadPasses,
   downloadReceipts,
   filterRows,
+  getDashboardMetric,
+  radialChartConfig,
+  barChartConfig,
 };

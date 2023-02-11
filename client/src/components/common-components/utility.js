@@ -137,3 +137,148 @@ export const filterRows = (rows = [], filters) => {
   }
   return filteredRows;
 };
+
+export const getDashboardMetric = (forms = []) => {
+  return forms.reduce(
+    (acc, item) => {
+      const grandTotal = getGrandTotal(item);
+      acc.total.takhmeenAmount += Number(item.takhmeenAmount);
+      acc.total.zabihat += Number(item.zabihat);
+      acc.total.niyaaz += Number(item.niyaaz);
+      acc.total.iftaari += Number(item.iftaari);
+      acc.total.chairs += Number(item.chairs);
+      acc.total.grandTotal += grandTotal;
+      acc.total.paidAmount += Number(item.paidAmount);
+      acc.total.pendingAmount += grandTotal - Number(item.paidAmount);
+      if (acc[item.markaz]) {
+        acc[item.markaz].takhmeenAmount += Number(item.takhmeenAmount);
+        acc[item.markaz].zabihat += Number(item.zabihat);
+        acc[item.markaz].niyaaz += Number(item.niyaaz);
+        acc[item.markaz].iftaari += Number(item.iftaari);
+        acc[item.markaz].chairs += Number(item.chairs);
+        acc[item.markaz].grandTotal += grandTotal;
+        acc[item.markaz].paidAmount += Number(item.paidAmount);
+        acc[item.markaz].pendingAmount += grandTotal - Number(item.paidAmount);
+      } else {
+        acc[item.markaz] = {
+          takhmeenAmount: Number(item.takhmeenAmount),
+          zabihat: Number(item.zabihat),
+          niyaaz: Number(item.niyaaz),
+          iftaari: Number(item.iftaari),
+          chairs: Number(item.chairs),
+          grandTotal: grandTotal,
+          paidAmount: Number(item.paidAmount),
+          pendingAmount: grandTotal - Number(item.paidAmount),
+        };
+      }
+      return acc;
+    },
+    {
+      total: {
+        takhmeenAmount: 0,
+        zabihat: 0,
+        niyaaz: 0,
+        iftaari: 0,
+        chairs: 0,
+        grandTotal: 0,
+        pendingAmount: 0,
+        paidAmount: 0,
+      },
+    }
+  );
+};
+
+export const radialChartConfig = (data) => {
+  return {
+    series: data.series,
+    options: {
+      chart: {
+        height: data.height,
+        type: "radialBar",
+      },
+      plotOptions: {
+        radialBar: {
+          dataLabels: {
+            name: {
+              fontSize: "22px",
+            },
+            value: {
+              fontSize: "16px",
+            },
+            total: {
+              show: false,
+              label: "Total",
+              formatter: (w) => {
+                return data.total;
+              },
+            },
+          },
+        },
+      },
+      title: {
+        text: data.titleText,
+      },
+      labels: data.labels,
+    },
+  };
+};
+
+export const barChartConfig = (data) => {
+  return {
+    series: data.series,
+    options: {
+      dataLabels: {
+        enabled: false,
+      },
+      chart: {
+        type: "bar",
+        height: data.height,
+        stacked: data.stacked,
+        toolbar: {
+          show: true,
+          tools: {
+            download: false,
+          },
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          dataLabels: {
+            position: "top",
+            total: {
+              enabled: true,
+              offsetX: 0,
+              style: {
+                fontSize: "10px",
+                fontWeight: 800,
+              },
+            },
+          },
+        },
+      },
+      stroke: {
+        width: 1,
+        colors: ["#fff"],
+      },
+      title: {
+        text: data.titleText,
+      },
+      xaxis: {
+        categories: data.xaxisCategories,
+        title: {
+          text: data.yaxisTitle,
+        },
+      },
+      yaxis: {},
+      fill: {
+        opacity: 1,
+      },
+      legend: {
+        position: "top",
+        horizontalAlign: "left",
+        offsetX: 40,
+      },
+    },
+  };
+};
