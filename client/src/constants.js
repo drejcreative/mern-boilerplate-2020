@@ -1,5 +1,6 @@
 export const ZABIHAT_UNIT = 4500;
 export const CHAIRS_UNIT = 300;
+export const HOME_HEADER = "Shehrullah-il-Moazzam 1444H";
 export const PASSES_HEADER = "Shehrullah-il-Moazzam 1444H Pass";
 export const RECEIPT_HEADER = "Shehrullah-il-Moazzam 1444H Receipt";
 export const FORM_LIST_HEADER =

@@ -1,16 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import PlusIcon from "@mui/icons-material/PlusOne";
 import ViewIcon from "@mui/icons-material/ViewList";
+import { HOME_HEADER } from "../constants";
 
 export default function Home() {
   const navigate = useNavigate();
   return (
     <div>
       <div>
-        <div className="d-flex justify-content-center mb-4">
+        <div className="d-flex flex-column align-items-center mb-4">
           <img
             onClick={() => {
               navigate("/");
@@ -20,6 +21,9 @@ export default function Home() {
             src="/logo.png"
             alt="Home"
           />
+          <Typography variant="h4" component="h4" color={"#966919"}>
+            {HOME_HEADER}
+          </Typography>
         </div>
       </div>
       <div className="d-flex align-items-center flex-column">
