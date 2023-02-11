@@ -357,7 +357,7 @@ export default function FormList() {
                 key={item.value}
                 label={item.displayVal}
                 value={item.displayVal}
-                labelPlacement={"start"}
+                labelPlacement={"end"}
                 control={
                   <Checkbox
                     name={item.value}
