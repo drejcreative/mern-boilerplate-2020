@@ -118,10 +118,12 @@ const stableSort = (array, comparator) => {
 };
 
 export const filterRows = (rows = [], filters) => {
-  let filteredRows = rows.filter((i) => filters.selectedMarkaz[i.markaz]);
+  let filteredRows = rows.filter((i) => {
+    return filters.selectedMarkaz[i.markaz];
+  });
   if (filters.sort.orderBy) {
     filteredRows = stableSort(
-      rows,
+      filteredRows,
       getComparator(filters.sort.order, filters.sort.orderBy)
     );
   }

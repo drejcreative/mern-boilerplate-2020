@@ -272,17 +272,17 @@ export default function FormList() {
     useCustomHook();
   const [origRows, setOrigRows] = React.useState([]);
   const [rows, setRows] = React.useState([]);
-  const [searchedVal, setSearchedVal] = React.useState("");
-  const [sort, setSort] = React.useState({
-    orderBy: "",
-    order: "",
-  });
-  const [selectedMarkaz, setSelectedMarkaz] = React.useState(
-    MARKAZ_CONST.reduce((acc, i) => {
+  const [filters, setFilters] = React.useState({
+    selectedMarkaz: MARKAZ_CONST.reduce((acc, i) => {
       acc[i.value] = true;
       return acc;
-    }, {})
-  );
+    }, {}),
+    sort: {
+      orderBy: "",
+      order: "",
+    },
+    searchedVal: "",
+  });
 
   React.useEffect(() => {
     getForms();
@@ -290,9 +290,15 @@ export default function FormList() {
   }, []);
 
   React.useEffect(() => {
-    setRows(filterRows(origRows, { searchedVal, sort, selectedMarkaz }));
+    setRows(
+      filterRows(origRows, {
+        searchedVal: filters.searchedVal,
+        sort: filters.sort,
+        selectedMarkaz: filters.selectedMarkaz,
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [origRows]);
+  }, [origRows, filters]);
 
   React.useEffect(() => {
     setOrigRows(state.forms.map((i) => createData(i)));
@@ -319,15 +325,17 @@ export default function FormList() {
     endLoading();
   };
 
-  const sortHandler = (property) => {
-    const isAsc = sort.orderBy === property && sort.order === "asc";
-    const val = {
-      orderBy: property,
-      order: isAsc ? "desc" : "asc",
+  const sortHandler = React.useMemo(() => {
+    return (property) => {
+      const isAsc =
+        filters.sort.orderBy === property && filters.sort.order === "asc";
+      const val = {
+        orderBy: property,
+        order: isAsc ? "desc" : "asc",
+      };
+      setFilters({ ...filters, sort: val });
     };
-    setSort(val);
-    setRows(filterRows(origRows, { searchedVal, selectedMarkaz, sort: val }));
-  };
+  }, [filters, setFilters]);
 
   return (
     <>
@@ -338,13 +346,10 @@ export default function FormList() {
             <SearchIcon />
           </SearchIconWrapper>
           <StyledInputBase
-            value={searchedVal}
+            value={filters.searchedVal}
             onChange={(e) => {
               const val = e?.currentTarget?.value ?? "";
-              setSearchedVal(val);
-              setRows(
-                filterRows(origRows, { searchedVal: val, selectedMarkaz, sort })
-              );
+              setFilters({ ...filters, searchedVal: val });
             }}
             placeholder="Search…"
             inputProps={{ "aria-label": "search" }}
@@ -361,20 +366,13 @@ export default function FormList() {
                 control={
                   <Checkbox
                     name={item.value}
-                    checked={selectedMarkaz[item.value]}
+                    checked={filters.selectedMarkaz[item.value]}
                     onChange={(e) => {
                       const val = {
-                        ...selectedMarkaz,
-                        [e.target.name]: e.target.checked,
+                        ...filters.selectedMarkaz,
                       };
-                      setSelectedMarkaz(val);
-                      setRows(
-                        filterRows(origRows, {
-                          searchedVal,
-                          selectedMarkaz: val,
-                          sort,
-                        })
-                      );
+                      val[e.target.name] = e.target.checked;
+                      setFilters({ ...filters, selectedMarkaz: val });
                     }}
                   />
                 }
@@ -398,8 +396,8 @@ export default function FormList() {
           Row={Row}
           RowDetails={RowDetails}
           FixedHeaderContent={FixedHeaderContent}
-          order={sort.order}
-          orderBy={sort.orderBy}
+          order={filters.sort.order}
+          orderBy={filters.sort.orderBy}
           sortHandler={sortHandler}
         />
       }
