@@ -81,7 +81,7 @@ const Receipt = (props) => {
         HOFName: takhmeenDetails.HOFName,
       });
       if (isOK) {
-        addToastMsg("Details saved : " + data._id, "success");
+        addToastMsg("Receipt saved : " + data.receiptNo, "success");
         reset();
         navigate("/");
       } else {
@@ -249,6 +249,7 @@ const Receipt = (props) => {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  required
                   fullWidth
                   size="small"
                   id="details"

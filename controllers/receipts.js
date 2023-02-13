@@ -1,3 +1,4 @@
+const countersModel = require("../models/countersModel");
 const Receipts = require("../models/receiptsModel");
 const { updateTakhmeenForm } = require("./takhmeenForm");
 
@@ -45,9 +46,14 @@ exports.getByHOF = async (req, res) => {
 // @route  POST /api/v1/receipts
 exports.add = async (req, res) => {
   try {
+    const counterSeq = await countersModel.findByIdAndUpdate(
+      { _id: "RECEIPTS" },
+      { $inc: { seq: 1 } },
+      { new: true }
+    );
     const receipt = await Receipts.create({
       ...req.body,
-      receiptNo: `RECEIPT-${Date.now()}`,
+      receiptNo: `1444H/${counterSeq.seq}`,
     });
     const { HOFId, amount } = req.body;
     await updateTakhmeenForm(HOFId, { paidAmount: amount }, true);

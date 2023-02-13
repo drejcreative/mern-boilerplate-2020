@@ -13,8 +13,17 @@ const connectDB = async () => {
     console.log("MongoDB connected");
     console.log("DB Counters initialization, if not already");
     countersModel
-      .insertMany([{ _id: "ZM" }, { _id: "BH" }, { _id: "JM" }])
-      .catch((e) => console.log("Counters already present!!!", e.message));
+      .insertMany([{ _id: "ZM" }])
+      .catch((e) => console.log("Counter already present!!!", e.message));
+    countersModel
+      .insertMany([{ _id: "BH" }])
+      .catch((e) => console.log("Counter already present!!!", e.message));
+    countersModel
+      .insertMany([{ _id: "JM" }])
+      .catch((e) => console.log("Counter already present!!!", e.message));
+    countersModel
+      .insertMany([{ _id: "RECEIPTS" }])
+      .catch((e) => console.log("Counter already present!!!", e.message));
   } catch (error) {
     console.log(`Error connecting to DB: ${error.message}`);
     process.exit(1);

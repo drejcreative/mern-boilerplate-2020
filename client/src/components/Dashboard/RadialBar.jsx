@@ -8,8 +8,8 @@ const RadialBar = ({ dashboardMetric }) => {
   const labels = MARKAZ_CONST.map((item) => item.displayVal);
   const series = [
     ZM?.paidAmount ? ((ZM.paidAmount / ZM.grandTotal) * 100).toFixed(2) : 0,
-    JM?.paidAmount ? ((JM.paidAmount / JM.grandTotal) * 100).toFixed(2) : 0,
     BH?.paidAmount ? ((BH.paidAmount / BH.grandTotal) * 100).toFixed(2) : 0,
+    JM?.paidAmount ? ((JM.paidAmount / JM.grandTotal) * 100).toFixed(2) : 0,
   ];
   const totalA = React.useMemo(() => {
     return total.paidAmount
