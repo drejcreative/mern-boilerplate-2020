@@ -11,12 +11,17 @@ const RadialBar = ({ dashboardMetric }) => {
     JM?.paidAmount ? ((JM.paidAmount / JM.grandTotal) * 100).toFixed(2) : 0,
     BH?.paidAmount ? ((BH.paidAmount / BH.grandTotal) * 100).toFixed(2) : 0,
   ];
+  const totalA = React.useMemo(() => {
+    return total.paidAmount
+      ? ((total.paidAmount / total.grandTotal) * 100).toFixed(2)
+      : 0;
+  }, [total]);
   const chartConfig = radialChartConfig({
     series,
     labels,
     titleText: "Total Paid Amount",
     height: 365,
-    total: total.paidAmount ? (total.paidAmount / total.grandTotal) * 100 : 0,
+    total: totalA,
   });
   return (
     <ReactApexChart

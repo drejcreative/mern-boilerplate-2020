@@ -198,19 +198,22 @@ export const radialChartConfig = (data) => {
       },
       plotOptions: {
         radialBar: {
+          offsetY: 0,
+          startAngle: 0,
+          endAngle: 270,
+          hollow: {
+            margin: 5,
+            size: "30%",
+            background: "transparent",
+          },
           dataLabels: {
             name: {
+              show: false,
               fontSize: "22px",
             },
             value: {
-              fontSize: "16px",
-            },
-            total: {
               show: false,
-              label: "Total",
-              formatter: (w) => {
-                return data.total;
-              },
+              fontSize: "16px",
             },
           },
         },
@@ -219,6 +222,28 @@ export const radialChartConfig = (data) => {
         text: data.titleText,
       },
       labels: data.labels,
+      legend: {
+        show: true,
+        floating: true,
+        fontSize: "16px",
+        position: "left",
+        offsetX: 100,
+        offsetY: 35,
+        labels: {
+          useSeriesColors: true,
+        },
+        markers: {
+          size: 0,
+        },
+        formatter: function (seriesName, opts) {
+          return (
+            seriesName + ":  " + opts.w.globals.series[opts.seriesIndex] + "%"
+          );
+        },
+        itemMargin: {
+          vertical: 3,
+        },
+      },
     },
   };
 };

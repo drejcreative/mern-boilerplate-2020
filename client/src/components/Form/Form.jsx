@@ -127,7 +127,7 @@ const MaterialFormComponent = (props) => {
         formService.isFormExistByHOF(e.target.value),
       ]);
       if (data[1]?.data?.exists) {
-        addToastMsg("Data already exists for this HOF", "warning");
+        addToastMsg("Data already exists for this HOF", "error");
         reset();
       } else if (data[0]?.data?.length) {
         const HOFDetails = data[0].data.find((d) => d.isHOF);
@@ -152,7 +152,7 @@ const MaterialFormComponent = (props) => {
         }
         reRender(!render);
       } else {
-        addToastMsg("HOF and its members details not found", "warning");
+        addToastMsg("HOF and its members details not found", "error");
         reset();
       }
     } catch (e) {

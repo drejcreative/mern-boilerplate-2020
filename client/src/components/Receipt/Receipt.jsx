@@ -108,7 +108,7 @@ const Receipt = (props) => {
       if (!data.exists) {
         addToastMsg(
           "Data not registered, please fill registration form first",
-          "warning"
+          "error"
         );
       } else {
         setTakhmeenDetails({
