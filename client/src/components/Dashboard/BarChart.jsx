@@ -12,8 +12,8 @@ const BarChart = ({ dashboardMetric }) => {
       //   color: "#FFD700",
       data: [
         ZM.takhmeenAmount ?? 0,
-        JM.takhmeenAmount ?? 0,
         BH.takhmeenAmount ?? 0,
+        JM.takhmeenAmount ?? 0,
       ],
     },
     {
@@ -21,27 +21,27 @@ const BarChart = ({ dashboardMetric }) => {
       //   color: "#B8860B",
       data: [
         Number(ZM.zabihat ?? 0) * ZABIHAT_UNIT,
-        Number(JM.zabihat ?? 0) * ZABIHAT_UNIT,
         Number(BH.zabihat ?? 0) * ZABIHAT_UNIT,
+        Number(JM.zabihat ?? 0) * ZABIHAT_UNIT,
       ],
     },
     {
       name: "Niyaaz",
       //   color: "#8B5E3C",
-      data: [ZM.niyaaz ?? 0, JM.niyaaz ?? 0, BH.niyaaz ?? 0],
+      data: [ZM.niyaaz ?? 0, BH.niyaaz ?? 0, JM.niyaaz ?? 0],
     },
     {
       name: "Iftaari",
       //   color: "#9B870C",
-      data: [ZM.iftaari ?? 0, JM.iftaari ?? 0, BH.iftaari ?? 0],
+      data: [ZM.iftaari ?? 0, BH.iftaari ?? 0, JM.iftaari ?? 0],
     },
     {
       name: "Chairs",
       //   color: "#966919",
       data: [
         Number(ZM.chairs ?? 0) * CHAIRS_UNIT,
-        Number(JM.chairs ?? 0) * CHAIRS_UNIT,
         Number(BH.chairs ?? 0) * CHAIRS_UNIT,
+        Number(JM.chairs ?? 0) * CHAIRS_UNIT,
       ],
     },
   ];
